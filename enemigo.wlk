@@ -2,13 +2,14 @@
 class Enemigo{
     var property position = game.origin()
     var property vida = 100
-    var property danio = 10
+    var property danio = 10 //Se puede borrar dependiendo de la idea
 
-    //Movimiento segun jugador
+    //Movimiento segun tipo de enemigo
     method mover() {
         //
     }  
 
+    //Se puede borrar dependiendo de la idea
     method ataque(jugador){
         jugador.recibirDanio(danio)
     }
