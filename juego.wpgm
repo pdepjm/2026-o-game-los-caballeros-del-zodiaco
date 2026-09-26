@@ -2,17 +2,29 @@ import wollok.game.*
 import jugador.*
 import partida.*
 import arena.*
+import enemigo.*
 
 program juego {
 
     game.title("Wollok Invaders")
 
     //Configuracion del mapa
-    game.width(11)
-    game.height(11)
-    game.cellSize(50)
-		
+    game.width(8)
+    game.height(16)
+    game.cellSize(64)
+	
+    game.boardGround("fondo.png")
+
     game.addVisual(naveJugador)
+    game.addVisual(enemigoComun)
+    game.addVisual(enemigoFuerte)
+    game.addVisual(enemigoSuperFuerte)
+
+    keyboard.s().onPressDo{
+        enemigoComun.mover()
+        enemigoFuerte.mover()
+        enemigoSuperFuerte.mover()
+    }
 
 	naveJugador.configurarControles()
 

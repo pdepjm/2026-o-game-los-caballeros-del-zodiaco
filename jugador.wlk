@@ -4,7 +4,7 @@ object naveJugador{
     var property position = game.at(5,0)
     var property danioBase = 10
 
-    method image() = "nave.png"
+    method image() = "nave2.png"
 
     method estaViva() = vida > 0
 
