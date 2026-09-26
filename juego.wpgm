@@ -15,16 +15,11 @@ program juego {
 	
     game.boardGround("fondo.png")
 
+    //Aparicion del jugador
     game.addVisual(naveJugador)
-    game.addVisual(enemigoComun)
-    game.addVisual(enemigoFuerte)
-    game.addVisual(enemigoSuperFuerte)
 
-    keyboard.s().onPressDo{
-        enemigoComun.mover()
-        enemigoFuerte.mover()
-        enemigoSuperFuerte.mover()
-    }
+    //Aparicion de enemigos
+    partida.enemigos().forEach({ enemigo => game.addVisual(enemigo) })
 
 	naveJugador.configurarControles()
 

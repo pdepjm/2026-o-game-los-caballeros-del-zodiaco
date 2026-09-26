@@ -1,3 +1,4 @@
+import partida.*
 
 class Enemigo{
     var property position
@@ -22,17 +23,26 @@ class Enemigo{
 
     method recibirDanio(cantidad){
         vida = vida - cantidad
+
+        if(self.estaMuerto()){
+            self.morir()
+        }
     }
 
     method estaMuerto(){
         return vida <= 0
     }
+
+    method morir(){
+        //Desaparece la nave
+        game.removeVisual(self)
+
+        //Se borra el objeto de la partida
+        partida.enemigos().remove(self)
+    }
 }
 
-//Para probar
-const enemigoComun = new Enemigo(vida = 100, position = game.at(2,11), imagen = "enemigoComun.png")
-const enemigoFuerte = new Enemigo(vida = 150, position = game.at(5,11), imagen = "enemigoFuerte.png")
-const enemigoSuperFuerte = new Enemigo(vida = 200, position = game.at(7,11), imagen = "enemigoSuperFuerte.png")
+
 
 
 //Para el futuro

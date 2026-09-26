@@ -1,4 +1,5 @@
 import armas.*
+import partida.*
 
 object naveJugador{
     var property vida = 100
@@ -57,5 +58,6 @@ object naveJugador{
         keyboard.num1().onPressDo({ armaSeleccionada = bala})
         keyboard.num2().onPressDo({ armaSeleccionada = laser})
         keyboard.num3().onPressDo({ armaSeleccionada = cohete})
+        keyboard.space().onPressDo({ self.disparar(partida.enemigos()) })
     }
 }
