@@ -1,8 +1,10 @@
 
 object naveJugador{
     var property vida = 100
-    var property position = game.at(5,1)
+    var property position = game.at(5,0)
     var property danioBase = 10
+
+    method image() = "nave.png"
 
     method estaViva() = vida > 0
 
@@ -14,11 +16,10 @@ object naveJugador{
     }
 
     method morir(){
-        //?
+        //
     }
 
-    method image() = "imagen.png"
-
+    //Movimiento izquierda/derecha
     method moverIzquierda() {
         if (position.x() > 0) {
             position = position.left(1)
@@ -32,7 +33,6 @@ object naveJugador{
     }
 
     method configurarControles() {
-
         keyboard.left().onPressDo({ self.moverIzquierda() })
         keyboard.right().onPressDo({ self.moverDerecha() })
     }

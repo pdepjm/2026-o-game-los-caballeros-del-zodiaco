@@ -1,5 +1,5 @@
-### [Nombre del juego]
+### [Wollok Invaders]
 
-* Integrante 1
-* Integrante 2
+* Tomas Greco
+* Tomas Martin Alfonso
 * Etc...
