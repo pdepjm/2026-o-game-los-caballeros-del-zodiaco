@@ -5,7 +5,9 @@ class Partida{
     var property arena
     var property enemigos = []
 
-    /* method enemigoMuerto() {
+    /*
+    method enemigoMuerto() {
         enemigo.removeIf { enemigo => enemigo.estaMuerto()}
-    } */
+    }
+    */
 }
