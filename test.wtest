@@ -1,0 +1,61 @@
+import jugador.*
+import enemigo.*
+import armas.*
+import partida.*
+import wollok.game.*
+
+describe "Tests para Wollok Invaders" {
+
+    //Creamos enemigos variados
+    const enemigoLejos = new Enemigo(vida = 100, position = game.at(5, 12), imagen = "enemigoComun.png", debilidad = bala)
+    const enemigoCerca = new Enemigo(vida = 100, position = game.at(5, 8), imagen = "enemigoFuerte.png", debilidad = cohete)
+    const enemigoOtraColumna = new Enemigo(vida = 100, position = game.at(3, 8), imagen = "enemigoSuperFuerte.png", debilidad = laser)
+
+    method initialize() {
+        partida.enemigos().clear()
+        partida.enemigos().addAll([enemigoLejos, enemigoCerca, enemigoOtraColumna])
+    }
+
+    test "La nave del jugador respeta el limite derecho de la pantalla" {
+        //Intentamos mover al jugador fuera de la pantalla
+        naveJugador.position(game.at(7, 0))
+        naveJugador.moverDerecha()
+        
+        // Verificamos que el jugador no haya logrado salir
+        assert.equals(7, naveJugador.position().x())
+    }
+
+    test "La nave del jugador impacta correctamente un disparo estandar (50) a la nave mas proxima de su columna" {
+        //La nave debe dañar solo al enemigoCerca sin afectar al resto de enemigos
+        naveJugador.position(game.at(5, 0)) //Movemos al jugador a la columna con dos enemigos
+        naveJugador.armaSeleccionada(bala)
+        naveJugador.disparar(partida.enemigos())
+
+        //Al ser golpeado con una bala (que no es su debilidad), solo se restan 50 puntos de vida
+        assert.equals(50, enemigoCerca.vida())
+        
+        //Los otros enemigos mantienen su vida inicial
+        assert.equals(100, enemigoLejos.vida())
+        assert.equals(100, enemigoOtraColumna.vida())
+    }
+
+    test "El daño critico (100) se aplica correctamente cuando el arma coincide con la debilidad" {
+        naveJugador.position(game.at(3, 0)) //Movemos al jugador a la columna de enemigoOtraColumna
+        naveJugador.armaSeleccionada(laser)  //Usamos laser ya que es la debilidad de esa nave
+        
+        naveJugador.disparar(partida.enemigos())
+        
+        //Se deben restar los 100 puntos de vida
+        assert.equals(0, enemigoOtraColumna.vida())
+    }
+
+    test "El cambio de turno mueve correctamente a los enemigos en el eje Y" {
+        const posicionInicialY = enemigoLejos.position().y()
+        
+        //Hacemos un cambio de turno
+        partida.turnoJugadorTerminado()
+        
+        //Verificamos que el enemigo haya descendido una casilla
+        assert.equals(posicionInicialY - 1, enemigoLejos.position().y())
+    }
+}

@@ -29,7 +29,7 @@ object naveJugador{
     method estaEnMismaColumna(enemigo) = enemigo.position().x() == position.x()
 
     //Arma por defecto
-    var armaSeleccionada = laser
+    var property armaSeleccionada = laser
 
     //#Disparo
 
