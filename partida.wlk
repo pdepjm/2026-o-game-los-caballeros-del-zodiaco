@@ -5,7 +5,8 @@ import game.*
 import armas.*
 
 object partida{
-    //Inicio de partida
+    //#Inicio de partida
+    
     var jugando = false
     method iniciar(){
         if(!jugando){
@@ -25,19 +26,43 @@ object partida{
         }
     }
 
+    /*
     //Posicion del enemigo
     method posicion(){
         const x = 0.randomUpTo(game.width()).truncate(0)
         const y = 13 + 0.randomUpTo(2).truncate(0)
         return game.at(x,y)
     }
+    */
 
-    //Temporal hasta que usemos inherit
-    var property enemigos = [
-    new Enemigo(vida = 100, position = self.posicion(), imagen = "enemigoComun.png", debilidad = bala),
-    new Enemigo(vida = 100, position = self.posicion(), imagen = "enemigoFuerte.png", debilidad = laser),
-    new Enemigo(vida = 100, position = self.posicion(), imagen = "enemigoSuperFuerte.png", debilidad = cohete),
-    new Enemigo(vida = 100, position = self.posicion(), imagen = "enemigoSuperFuerte.png", debilidad = cohete)]
+    //#Generacion de enemigos
+
+    method posicionValida(){
+        //Propone una posicion aleatoria dentro de la zona elegida
+        const x = 0.randomUpTo(game.width()).truncate(0)
+        const y = 13 + 0.randomUpTo(2).truncate(0)
+        const posicionPropuesta = game.at(x, y)
+
+        //Verifica si la posicion propuesta esta ocupada
+        if(enemigos.any({ enemigos => enemigos.position() == posicionPropuesta })){
+            return self.posicionValida() //Si otro enemigo esta en esa posicion, repite el proceso
+        }else{
+            return posicionPropuesta //Si es valida, devuelve las coordenadas
+        }
+    }
+    
+    //Lista de enemigos en pantalla
+    var property enemigos = []
+
+    //Genera los enemigos usando la clase Enemigo
+    method generarEnemigos(){
+        enemigos.add(new Enemigo(vida = 100, position = self.posicionValida(), imagen = "enemigoComun.png", debilidad = bala))
+        enemigos.add(new Enemigo(vida = 100, position = self.posicionValida(), imagen = "enemigoFuerte.png", debilidad = laser))
+        enemigos.add(new Enemigo(vida = 100, position = self.posicionValida(), imagen = "enemigoSuperFuerte.png", debilidad = cohete))
+        enemigos.add(new Enemigo(vida = 100, position = self.posicionValida(), imagen = "enemigoSuperFuerte.png", debilidad = cohete))
+    }
+
+    //#Turnos
 
     //Termina el turno del jugador -> avanzan los enemigos 
     method turnoJugadorTerminado() {
@@ -47,7 +72,8 @@ object partida{
         self.muerteJugador()
     }
 
-    //Game over
+    //#Game over
+
     method muerteJugador(){
         if(enemigos.any({ enemigo => enemigo.position().y() <= 0})){
             self.gameOver()

@@ -1,6 +1,8 @@
 import partida.*
 
 class Enemigo{
+
+    //#Variables
     var property position
     var property vida 
     var property danio = 10
@@ -8,18 +10,14 @@ class Enemigo{
     const imagen 
     method image() = imagen
 
-    //Movimiento segun tipo de enemigo
+    //#Movimiento
     method mover() {
 
         //Se mueve un casillero abajo
         position = position.down(1)
-    }  
-
-    //Se puede borrar dependiendo de la idea
-    method ataque(jugador){
-        jugador.recibirDanio(danio)
     }
 
+    //#Daño y muerte
     method recibirDanio(arma){
         //Si es atacado con su debilidad, muere. De lo contrario, se le inflinge la mitad del daño.
         if(arma == debilidad){
@@ -47,8 +45,9 @@ class Enemigo{
         partida.enemigos().remove(self)
     }
 
+    //#Reinicio
     method reiniciar(){
-        position = partida.posicion()
+        position = partida.posicionValida()
         vida = 100
     }
     

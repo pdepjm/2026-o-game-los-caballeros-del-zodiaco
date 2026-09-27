@@ -15,6 +15,9 @@ program juego {
     game.cellSize(64)
     game.boardGround("fondo.png")
 
+    //Generacion de enemigos
+    partida.generarEnemigos()
+
     //Menu -> toco enter para empezar
     game.addVisual(menu)
     keyboard.enter().onPressDo{
