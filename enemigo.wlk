@@ -4,9 +4,8 @@ class Enemigo{
     var property position
     var property vida 
     var property danio = 10
-    var property imagen 
+    const imagen 
     
-    //Para probar
     method image() = imagen
 
     //Movimiento segun tipo de enemigo
@@ -40,6 +39,8 @@ class Enemigo{
         //Se borra el objeto de la partida
         partida.enemigos().remove(self)
     }
+
+    
 }
 
 

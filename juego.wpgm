@@ -3,6 +3,7 @@ import jugador.*
 import partida.*
 import arena.*
 import enemigo.*
+import pantallas.*
 
 program juego {
 
@@ -12,14 +13,27 @@ program juego {
     game.width(8)
     game.height(16)
     game.cellSize(64)
-	
     game.boardGround("fondo.png")
 
-    //Aparicion del jugador
-    game.addVisual(naveJugador)
+    //Menu -> toco enter para empezar
+    game.addVisual(menu)
+    keyboard.enter().onPressDo{
 
-    //Aparicion de enemigos
-    partida.enemigos().forEach({ enemigo => game.addVisual(enemigo) })
+        //Remuevo el menu
+        game.removeVisual(menu)
+        
+        //Aparicion del jugador
+        game.addVisual(naveJugador)
+
+        //Aparicion de enemigos
+        partida.enemigos().forEach{ enemigo => game.addVisual(enemigo) }
+    }
+
+
+    //Movimiento de Enemigos por turno de jugador
+    keyboard.space().onPressDo{
+        partida.turnoJugadorTerminado()
+    }
 
 	naveJugador.configurarControles()
 
