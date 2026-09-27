@@ -18,6 +18,12 @@ object naveJugador{
     method morir(){
         // 
     }
+    //Reinicio jugador
+    method reiniciar(){
+        position = game.at(5,0)
+        vida = 100
+        imagen = "nave-recto.png"
+    }
 
     //Verificacion de columna
     method estaEnMismaColumna(enemigo) = enemigo.position().x() == position.x()
@@ -49,14 +55,14 @@ object naveJugador{
     method moverIzquierda() {
         if (position.x() > 0) {
             position = position.left(1)
-            imagen = "nave-izquierda.png"
+            imagen = "nave-derecha.png"
         }
     }
 
     method moverDerecha() {
         if (position.x() < 7 ) {
             position = position.right(1)
-            imagen = "nave-derecha.png"
+            imagen = "nave-izquierda.png"
         }
     }
 
@@ -67,7 +73,7 @@ object naveJugador{
     //Controles
     method configurarControles() {
 
-        //Cuando presiono las teclas -> 
+        //Cuando presiono las teclas -> , <-
         keyboard.left().onPressDo {
             moviendoIzquierda = true
             imagen = "nave-izquierda.png"
@@ -91,17 +97,8 @@ object naveJugador{
 
         //Retardo
         const tickMovimiento = game.tick(75,{self.mover()}, false)
-
         tickMovimiento.start()
 
-
-        /*
-        //Teclas de movimiento
-        keyboard.left().onPressDo{ self.moverIzquierda() }
-        keyboard.right().onPressDo({ self.moverDerecha() })
-        keyboard.left().onReleaseDo({self.enderezar()})
-        keyboard.right().onReleaseDo({self.enderezar()})
-        */
 
         //Teclas de ataque
         keyboard.num1().onPressDo({ armaSeleccionada = bala})

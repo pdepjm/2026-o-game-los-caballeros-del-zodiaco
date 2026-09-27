@@ -18,17 +18,8 @@ program juego {
     //Menu -> toco enter para empezar
     game.addVisual(menu)
     keyboard.enter().onPressDo{
-
-        //Remuevo el menu
-        game.removeVisual(menu)
-        
-        //Aparicion del jugador
-        game.addVisual(naveJugador)
-
-        //Aparicion de enemigos
-        partida.enemigos().forEach{ enemigo => game.addVisual(enemigo) }
+        partida.iniciar()
     }
-
 
     //Movimiento de Enemigos por turno de jugador
     keyboard.space().onPressDo{

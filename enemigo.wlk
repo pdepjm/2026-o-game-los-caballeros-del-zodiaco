@@ -6,7 +6,6 @@ class Enemigo{
     var property danio = 10
     const property debilidad
     const imagen 
-    
     method image() = imagen
 
     //Movimiento segun tipo de enemigo
@@ -46,6 +45,11 @@ class Enemigo{
 
         //Se borra el objeto de la partida
         partida.enemigos().remove(self)
+    }
+
+    method reiniciar(){
+        position = partida.posicion()
+        vida = 100
     }
     
 }
