@@ -42,7 +42,8 @@ class Enemigo{
         game.removeVisual(self)
 
         //Se borra el objeto de la partida
-        partida.enemigos().remove(self)
+        //partida.enemigos().remove(self)
+        game.removeVisual(self)
     }
 
     //#Reinicio
