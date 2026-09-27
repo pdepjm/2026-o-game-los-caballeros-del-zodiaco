@@ -4,6 +4,7 @@ class Enemigo{
     var property position
     var property vida 
     var property danio = 10
+    const property debilidad
     const imagen 
     
     method image() = imagen
@@ -20,9 +21,16 @@ class Enemigo{
         jugador.recibirDanio(danio)
     }
 
-    method recibirDanio(cantidad){
-        vida = vida - cantidad
+    method recibirDanio(arma){
+        //Si es atacado con su debilidad, muere. De lo contrario, se le inflinge la mitad del daño.
+        if(arma == debilidad){
+            vida = vida - 100
+        }
+        else{
+            vida = vida - 50
+        }
 
+        //Cada vez que recibe daño se verifica si muere
         if(self.estaMuerto()){
             self.morir()
         }
@@ -39,12 +47,8 @@ class Enemigo{
         //Se borra el objeto de la partida
         partida.enemigos().remove(self)
     }
-
     
 }
-
-
-
 
 //Para el futuro
 /*object enemigoNormal inherits Enemigo{

@@ -1,17 +1,17 @@
 object bala{
     method impactar(enemigo){
-        enemigo.recibirDanio(100)
+        enemigo.recibirDanio(self)
     }
 }
 
 object laser{
     method impactar(enemigo){
-        enemigo.recibirDanio(150)
+        enemigo.recibirDanio(self)
     }
 }
 
 object cohete{
     method impactar(enemigo){
-        enemigo.recibirDanio(200)
+        enemigo.recibirDanio(self)
     }
 }
