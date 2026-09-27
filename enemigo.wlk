@@ -3,6 +3,7 @@ import partida.*
 class Enemigo{
 
     //#Variables
+
     var property position
     var property vida 
     var property danio = 10
@@ -11,6 +12,7 @@ class Enemigo{
     method image() = imagen
 
     //#Movimiento
+
     method mover() {
 
         //Se mueve un casillero abajo
@@ -18,6 +20,7 @@ class Enemigo{
     }
 
     //#Daño y muerte
+    
     method recibirDanio(arma){
         //Si es atacado con su debilidad, muere. De lo contrario, se le inflinge la mitad del daño.
         if(arma == debilidad){
@@ -42,14 +45,8 @@ class Enemigo{
         game.removeVisual(self)
 
         //Se borra el objeto de la partida
-        //partida.enemigos().remove(self)
-        game.removeVisual(self)
-    }
-
-    //#Reinicio
-    method reiniciar(){
-        position = partida.posicionValida()
-        vida = 100
+        partida.enemigos().remove(self)
+        //game.removeVisual(self)
     }
     
 }

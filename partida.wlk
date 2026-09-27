@@ -5,24 +5,34 @@ import game.*
 import armas.*
 
 object partida{
-    //#Inicio de partida
-    
-    var jugando = false
+    //#Inicio  y reinicio de partida
+
+    var property jugando = false
     method iniciar(){
         if(!jugando){
-            //Cambio a true para q no puedan volver a apretar espacio
+            //Cambio a true para que no puedan volver a apretar espacio
             jugando = true
 
-            //Remuevo el menu y el gameover (si se reinicia la partida)
-            game.removeVisual(menu)
-            game.removeVisual(pantallaGameover)
+            //Verificacion para evitar que el codigo se rompa
+            if (game.hasVisual(menu)) {
+                //Remuevo el menu
+                game.removeVisual(menu)
+            }
+            if (game.hasVisual(pantallaGameover)) {
+                //Remuevo el Game Over
+                game.removeVisual(pantallaGameover)
+            }
+
+            //Removemos todo lo dibujado en pantalla
+            self.limpiarTablero()
             
-            //Aparicion del jugador y reinicio
+            //Aparicion del jugador evitando duplicados y reinicio
             game.addVisual(naveJugador)
             naveJugador.reiniciar()
 
-            //Aparicion de enemigos y reseteo (si se reinicia la partida)
-            self.enemigos().forEach{ enemigo => game.addVisual(enemigo) enemigo.reiniciar() }
+            //Agregamos a los enemigos
+            self.generarEnemigos()
+            self.enemigos().forEach{ enemigo => game.addVisual(enemigo) }
         }
     }
 
@@ -44,7 +54,7 @@ object partida{
         const posicionPropuesta = game.at(x, y)
 
         //Verifica si la posicion propuesta esta ocupada
-        if(enemigos.any({ enemigos => enemigos.position() == posicionPropuesta })){
+        if(enemigos.any({ enemigo => enemigo.position() == posicionPropuesta })){
             return self.posicionValida() //Si otro enemigo esta en esa posicion, repite el proceso
         }else{
             return posicionPropuesta //Si es valida, devuelve las coordenadas
@@ -81,14 +91,27 @@ object partida{
     }
 
     method gameOver(){
-        //Cambio a false para q no aprete espacio
+        //Cambio a false para que no aprete espacio
         jugando = false
-
-        //Elimino enemigos y nave
-        game.removeVisual(naveJugador)
-        enemigos.forEach { enemigo => game.removeVisual(enemigo)}
 
         //Pantalla de game over
         pantallaGameover.mostrar()
+    }
+
+    method limpiarTablero() {
+        //Verifica que la nave este en pantalla antes de sacarla
+        if (game.hasVisual(naveJugador)) {
+            game.removeVisual(naveJugador)
+        }
+        
+        //Verifica y borra a cada enemigo que haya quedado vivo
+        enemigos.forEach({ enemigo => 
+            if (game.hasVisual(enemigo)) { 
+                game.removeVisual(enemigo) 
+            }
+        })
+        
+        //Vacia la lista para empezar de cero
+        enemigos.clear() 
     }
 }

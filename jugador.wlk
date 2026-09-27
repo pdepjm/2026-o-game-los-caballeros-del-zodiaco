@@ -4,7 +4,6 @@ import partida.*
 object naveJugador{
     var property vida = 100
     var property position = game.at(5,0)
-    var property danioBase = 10
 
     var moviendoIzquierda = false
     var moviendoDerecha = false
@@ -18,6 +17,7 @@ object naveJugador{
     method morir(){
         // 
     }
+    
     //Reinicio jugador
     method reiniciar(){
         position = game.at(5,0)
@@ -31,7 +31,8 @@ object naveJugador{
     //Arma por defecto
     var armaSeleccionada = laser
 
-    //Disparo
+    //#Disparo
+
     method disparar(enemigos){
         const enLineaDeTiro = enemigos.filter({e => self.estaEnMismaColumna(e)})
 
@@ -41,7 +42,8 @@ object naveJugador{
         }
     }
 
-    //Movimiento
+    //#Movimiento
+
     method mover(){
         if(moviendoIzquierda){
             self.moverIzquierda()
@@ -70,7 +72,8 @@ object naveJugador{
         imagen = "nave-recto.png"
     }
 
-    //Controles
+    //#Controles
+
     method configurarControles() {
 
         //Cuando presiono las teclas -> , <-
@@ -105,5 +108,10 @@ object naveJugador{
         keyboard.num2().onPressDo({ armaSeleccionada = laser})
         keyboard.num3().onPressDo({ armaSeleccionada = cohete})
         keyboard.space().onPressDo({ self.disparar(partida.enemigos()) })
+
+        //Teclas extra
+        keyboard.r().onPressDo({ 
+            partida.jugando(false)
+            partida.iniciar()})
     }
 }
