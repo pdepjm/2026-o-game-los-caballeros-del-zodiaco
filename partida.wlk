@@ -28,7 +28,7 @@ object partida{
     //Posicion del enemigo
     method posicion(){
         const x = 0.randomUpTo(game.width()).truncate(0)
-        const y = 13 + 0.randomUpTo(2).truncate(0)
+        const y = 12 + 0.randomUpTo(2).truncate(0)
         return game.at(x,y)
     }
 
