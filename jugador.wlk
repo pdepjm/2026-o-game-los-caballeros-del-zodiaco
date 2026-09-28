@@ -29,11 +29,13 @@ object naveJugador{
     method estaEnMismaColumna(enemigo) = enemigo.position().x() == position.x()
 
     //Arma por defecto
-    var armaSeleccionada = laser
+    var property armaSeleccionada = laser
 
     //#Disparo
 
     method disparar(enemigos){
+        proyectil.dispararDesde(self)
+
         const enLineaDeTiro = enemigos.filter({e => self.estaEnMismaColumna(e)})
 
         if (!enLineaDeTiro.isEmpty()){

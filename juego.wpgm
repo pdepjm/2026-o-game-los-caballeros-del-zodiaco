@@ -4,6 +4,7 @@ import partida.*
 import arena.*
 import enemigo.*
 import pantallas.*
+import armas.*
 
 program juego {
 
@@ -23,11 +24,14 @@ program juego {
     keyboard.enter().onPressDo{
         partida.iniciar()
     }
+    game.addVisual(proyectil)
 
     //Movimiento de Enemigos por turno de jugador
     keyboard.space().onPressDo{
         partida.turnoJugadorTerminado()
     }
+
+    proyectil.iniciar()
 
 	naveJugador.configurarControles()
 
