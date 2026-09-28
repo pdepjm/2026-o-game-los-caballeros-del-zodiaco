@@ -35,12 +35,13 @@ object naveJugador{
 
     method disparar(enemigos){
         proyectil.dispararDesde(self)
+        proyectil.imagen(armaSeleccionada.imagen())
 
         const enLineaDeTiro = enemigos.filter({e => self.estaEnMismaColumna(e)})
 
         if (!enLineaDeTiro.isEmpty()){
             const objetivo = enLineaDeTiro.min({e => e.position().y()})
-            armaSeleccionada.impactar(objetivo)
+            manejoDeDisparo.impactar(armaSeleccionada, objetivo)
         }
     }
 

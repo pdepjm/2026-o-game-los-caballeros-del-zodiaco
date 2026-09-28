@@ -32,22 +32,21 @@ object proyectil{
 }
 
 object bala{
-    method impactar(enemigo){
-        proyectil.imagen("bala.png")
-        enemigo.recibirDanio(self)
-    }
+    method imagen() = "armas/bala.png"
 }
 
 object laser{
-    method impactar(enemigo){
-        proyectil.imagen("bala.png")
-        enemigo.recibirDanio(self)
-    }
+    method imagen() = "armas/laser.png"
 }
 
 object cohete{
-    method impactar(enemigo){
-        proyectil.imagen("bala.png")
-        enemigo.recibirDanio(self)
+    method imagen() = "armas/cohete.png"
+}
+
+object manejoDeDisparo {
+    
+    //Recibe arma y enemigo -> Cambia la imagen y el enemigo recibe danio segun arma
+    method impactar(arma, enemigo){
+        enemigo.recibirDanio(arma)
     }
 }
