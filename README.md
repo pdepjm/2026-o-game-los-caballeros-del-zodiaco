@@ -2,4 +2,6 @@
 
 * Tomas Greco
 * Tomas Martin Alfonso
-* Etc...
+* Alan Sebastián Maqueda
+* Patricio Lionel García
+* Jesús S.
