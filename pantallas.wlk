@@ -1,12 +1,12 @@
 import game.*
 object menu {
     method position() = game.at(0,0)
-    method image() = "menu.png"
+    method image() = "pantallas/menu.png"
 }
 
 object pantallaGameover {
     method position() = game.at(0,0)
-    method image() = "gameover.png"
+    method image() = "pantallas/gameover.png"
 
     method mostrar(){
         game.addVisual(self)

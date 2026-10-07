@@ -12,15 +12,10 @@ object naveJugador{
     var imagen = "nave-recto.png"
     method image() = imagen
 
-    method estaViva() = vida > 0
-
-    method morir(){
-        // 
-    }
     
     //Reinicio jugador
     method reiniciar(){
-        position = game.at(5,0)
+        position = game.at(4,0)
         vida = 100
         imagen = "nave-recto.png"
     }

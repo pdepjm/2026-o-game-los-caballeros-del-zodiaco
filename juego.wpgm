@@ -1,23 +1,18 @@
 import wollok.game.*
 import jugador.*
 import partida.*
-import arena.*
+import mapa.*
 import enemigo.*
 import pantallas.*
 import armas.*
+
 
 program juego {
 
     game.title("Wollok Invaders")
 
-    //Configuracion del mapa
-    game.width(8)
-    game.height(16)
-    game.cellSize(64)
-    game.boardGround("fondo.png")
-
-    //Generacion de enemigos
-    partida.generarEnemigos()
+    //Configura incial de mapa -> Ancho, Alto, Background, etc
+    mapa.configuracionMapa()
 
     //Menu -> toco enter para empezar
     game.addVisual(menu)
