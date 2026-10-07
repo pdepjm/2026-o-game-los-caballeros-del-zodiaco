@@ -1,115 +1,133 @@
 import armas.*
 import partida.*
+import mapa.*
 
 object naveJugador{
-    var property vida = 100
-    var property position = game.at(5,0)
-
-    var moviendoIzquierda = false
-    var moviendoDerecha = false
-
-    //Imagen
+    const posicionInicial = game.at(5,0)
+    var property position = posicionInicial
     var imagen = "nave-recto.png"
-    method image() = imagen
 
-    
-    //Reinicio jugador
-    method reiniciar(){
-        position = game.at(4,0)
-        vida = 100
-        imagen = "nave-recto.png"
+    //#Movimiento
+    method mover(movimiento){
+        movimiento.mover(self)  
     }
 
-    //Verificacion de columna
-    method estaEnMismaColumna(enemigo) = enemigo.position().x() == position.x()
+    //#Imagen
+    method image() = imagen
+
+    method cambiarImagen(nuevaImagen){
+        imagen = nuevaImagen
+    }
+    
+    method enderezar(){
+        self.cambiarImagen("nave-recto.png")
+    }
+
+    //#Disparo
+    method disparar(enemigos){
+        manejoDeDisparo.disparar(armaSeleccionada, self, enemigos)
+    }
 
     //Arma por defecto
     var property armaSeleccionada = laser
 
-    //#Disparo
-
-    method disparar(enemigos){
-        proyectil.dispararDesde(self)
-        proyectil.imagen(armaSeleccionada.imagen())
-
-        const enLineaDeTiro = enemigos.filter({e => self.estaEnMismaColumna(e)})
-
-        if (!enLineaDeTiro.isEmpty()){
-            const objetivo = enLineaDeTiro.min({e => e.position().y()})
-            manejoDeDisparo.impactar(armaSeleccionada, objetivo)
-        }
+    method seleccionarArma(arma){
+        armaSeleccionada = arma
     }
 
-    //#Movimiento
-
-    method mover(){
-        if(moviendoIzquierda){
-            self.moverIzquierda()
-        }
-
-        if(moviendoDerecha){
-            self.moverDerecha()
-        }
+    //Reinicio jugador
+    method reiniciar(){
+        position = posicionInicial
+        self.enderezar()
     }
 
-    method moverIzquierda() {
-        if (position.x() > 0) {
-            position = position.left(1)
-            imagen = "nave-derecha.png"
-        }
-    }
+}
 
-    method moverDerecha() {
-        if (position.x() < 7 ) {
-            position = position.right(1)
-            imagen = "nave-izquierda.png"
-        }
-    }
+object controlesJugador {
 
-    method enderezar(){
-        imagen = "nave-recto.png"
-    }
+    var movimientoActual = null
 
-    //#Controles
+    method configuracion() {
 
-    method configurarControles() {
-
-        //Cuando presiono las teclas -> , <-
+        //#Movimiento
         keyboard.left().onPressDo {
-            moviendoIzquierda = true
-            imagen = "nave-izquierda.png"
+            movimientoActual = movimientoIzquierda
         }
 
         keyboard.right().onPressDo {
-            moviendoDerecha = true
-            imagen = "nave-derecha.png"
+            movimientoActual = movimientoDerecha
         }
 
-        //Cuando suelto las teclas -> 
         keyboard.left().onReleaseDo {
-            moviendoIzquierda = false
-            self.enderezar()
+            self.detenerMovimiento()
         }
 
         keyboard.right().onReleaseDo {
-            moviendoDerecha = false
-            self.enderezar()
+            self.detenerMovimiento()
         }
 
-        //Retardo
-        const tickMovimiento = game.tick(75,{self.mover()}, false)
-        tickMovimiento.start()
+        const tick = game.tick(75, {
+            if (movimientoActual != null) {
+                naveJugador.mover(movimientoActual)
+            }
+        }, false)
 
+        tick.start()
 
-        //Teclas de ataque
-        keyboard.num1().onPressDo({ armaSeleccionada = bala})
-        keyboard.num2().onPressDo({ armaSeleccionada = laser})
-        keyboard.num3().onPressDo({ armaSeleccionada = cohete})
-        keyboard.space().onPressDo({ self.disparar(partida.enemigos()) })
+        //#Otros
+        keyboard.space().onPressDo {
+            naveJugador.disparar(partida.enemigos())
+        }
 
-        //Teclas extra
-        keyboard.r().onPressDo({ 
-            partida.jugando(false)
-            partida.iniciar()})
+        keyboard.num1().onPressDo {
+            naveJugador.seleccionarArma(bala)
+        }
+
+        keyboard.num2().onPressDo {
+            naveJugador.seleccionarArma(laser)
+        }
+
+        keyboard.num3().onPressDo {
+            naveJugador.seleccionarArma(cohete)
+        }
+
+        keyboard.r().onPressDo {
+            partida.reiniciar()
+        }
+    }
+
+    method detenerMovimiento() {
+        movimientoActual = null
+        naveJugador.enderezar()
     }
 }
+
+class Movimiento {
+    const direccion
+    const imagen
+
+    method mover(nave){
+        const nuevaPosicion = direccion.nuevaPosicion(nave.position())
+
+        if (mapa.posicionValidaJugador(nuevaPosicion)){
+            nave.position(nuevaPosicion)
+            nave.cambiarImagen(imagen)
+        }
+    }
+
+}
+
+object izquierda {
+    method nuevaPosicion(posicion) {
+        return posicion.left(1)
+    }
+}
+
+object derecha {
+    method nuevaPosicion(posicion) {
+        return posicion.right(1)
+    }
+}
+
+const movimientoIzquierda = new Movimiento(direccion = izquierda, imagen = "nave-izquierda.png")
+const movimientoDerecha = new Movimiento(direccion = derecha, imagen = "nave-derecha.png")  

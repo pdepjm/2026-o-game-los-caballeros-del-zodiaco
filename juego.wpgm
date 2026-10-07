@@ -9,6 +9,7 @@ import armas.*
 
 program juego {
 
+    //Titulo del juego
     game.title("Wollok Invaders")
 
     //Configura incial de mapa -> Ancho, Alto, Background, etc
@@ -28,7 +29,7 @@ program juego {
 
     proyectil.iniciar()
 
-	naveJugador.configurarControles()
+	controlesJugador.configuracion()
 
     game.start()
 }
