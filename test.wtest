@@ -7,21 +7,21 @@ import wollok.game.*
 describe "Tests para Wollok Invaders" {
 
     // Creamos enemigos variados
-    const enemigoLejos = new Enemigo(
+    const enemigoLejos = new EnemigoComun(
         vida = 100,
         position = game.at(5, 12),
         imagen = "enemigoComun.png",
         debilidad = bala
     )
 
-    const enemigoCerca = new Enemigo(
+    const enemigoCerca = new EnemigoFuerte(
         vida = 100,
         position = game.at(5, 8),
         imagen = "enemigoFuerte.png",
         debilidad = cohete
     )
 
-    const enemigoOtraColumna = new Enemigo(
+    const enemigoOtraColumna = new EnemigoSuperFuerte(
         vida = 100,
         position = game.at(3, 8),
         imagen = "enemigoSuperFuerte.png",

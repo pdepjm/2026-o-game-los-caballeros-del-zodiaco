@@ -1,10 +1,12 @@
 import wollok.game.*
 import enemigo.*
 import armas.*
+import utilidades.*
+import nivel.*
 
 
 object mapa {
-	const ancho = 8
+	const ancho = 8 
 	const alto = 16
 	const tamanioCelda = 64
 	const rangoAparicionEnemigos = 3
@@ -25,14 +27,10 @@ object mapa {
 
 	//#Generacion de enemigos
 
-	method generarNumeroAleatorio(base, minimo, maximo){
-		return base + minimo.randomUpTo(maximo).truncate(0)
-	}
-
 	//Propone una posicion aleatoria dentro de la zona elegida
 	method posicionValidaEnemigo(enemigos) {
-        const posicionX = self.generarNumeroAleatorio(0, 0, ancho)
-        const posicionY = self.generarNumeroAleatorio(posicionMinimaEnemigos, 0, rangoAparicionEnemigos)
+        const posicionX = aleatorio.generarNumeroAleatorio(0, ancho)
+        const posicionY = posicionMinimaEnemigos + aleatorio.generarNumeroAleatorio(0, rangoAparicionEnemigos)
         const posicionPropuesta = game.at(posicionX, posicionY)
 
 		//Verifica si la posicion propuesta esta ocupada
@@ -44,36 +42,15 @@ object mapa {
     }
 
 	//Genera los enemigos usando la clase Enemigo
-    method generarEnemigos() {
+    method generarEnemigos(nivel) {
         const enemigos = []
 
-        enemigos.add(new Enemigo(
-            vida = 100,
-            position = self.posicionValidaEnemigo(enemigos),
-            imagen = "enemigos/enemigoComun.png",
-            debilidad = bala
-        ))
+        nivel.cantidadDeEnemigos().times({ indice =>
+            const tipoDeEnemigo = nivel.tipoDeEnemigo()
+            const posicion = self.posicionValidaEnemigo(enemigos)
 
-        enemigos.add(new Enemigo(
-            vida = 100,
-            position = self.posicionValidaEnemigo(enemigos),
-            imagen = "enemigos/enemigoFuerte.png",
-            debilidad = laser
-        ))
-
-        enemigos.add(new Enemigo(
-            vida = 100,
-            position = self.posicionValidaEnemigo(enemigos),
-            imagen = "enemigos/enemigoSuperFuerte.png",
-            debilidad = cohete
-        ))
-
-        enemigos.add(new Enemigo(
-            vida = 100,
-            position = self.posicionValidaEnemigo(enemigos),
-            imagen = "enemigos/enemigoSuperFuerte.png",
-            debilidad = cohete
-        ))
+            enemigos.add(tipoDeEnemigo.crear(posicion))
+        })
 
         return enemigos
     }

@@ -1,12 +1,11 @@
 import partida.*
-
+import armas.*
 class Enemigo{
 
     //#Variables
 
     var property position
     var property vida 
-    var property danio = 10
     const property debilidad
     const imagen 
     method image() = imagen
@@ -18,6 +17,8 @@ class Enemigo{
         //Se mueve un casillero abajo
         position = position.down(1)
     }
+
+    method vidaInicial()
 
     //#Daño y muerte
     
@@ -51,10 +52,46 @@ class Enemigo{
     
 }
 
-//Para el futuro
-/*object enemigoNormal inherits Enemigo{
-
-    method mover(){
-        //
+object fabricaEnemigoComun {
+    method crear(posicion) {
+        return new EnemigoComun(
+            vida = 100,
+            position = posicion,
+            imagen = "enemigos/enemigoComun.png",
+            debilidad = bala
+        )
     }
-}*/
+}
+
+object fabricaEnemigoFuerte {
+    method crear(posicion) {
+        return new EnemigoFuerte(
+            vida = 150,
+            position = posicion,
+            imagen = "enemigos/enemigoFuerte.png",
+            debilidad = laser
+        )
+    }
+}
+
+object fabricaEnemigoSuperFuerte {
+    method crear(posicion) {
+        return new EnemigoSuperFuerte(
+            vida = 200,
+            position = posicion,
+            imagen = "enemigos/enemigoSuperFuerte.png",
+            debilidad = cohete
+        )
+    }
+}
+class EnemigoComun inherits Enemigo {
+    override method vidaInicial() = 100
+}
+
+class EnemigoFuerte inherits Enemigo {
+    override method vidaInicial() = 150
+}
+
+class EnemigoSuperFuerte inherits Enemigo {
+   override method vidaInicial() = 200
+}

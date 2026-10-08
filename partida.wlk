@@ -4,10 +4,11 @@ import pantallas.*
 import game.*
 import armas.*
 import mapa.*
+import nivel.*
 
 object partida{
     //#Estado de la partida
-
+    var nivelActual = nivel1
     var jugando = false
     var property enemigos = []
 
@@ -20,6 +21,7 @@ object partida{
     }
 
     method reiniciar(){
+        nivelActual = nivel1
         self.prepararPartida()
     }
 
@@ -40,7 +42,7 @@ object partida{
     }
 
     method prepararEnemigos() {
-        enemigos = mapa.generarEnemigos()
+        enemigos = mapa.generarEnemigos(nivelActual)
         mapa.agregarEnemigos(enemigos)
     }
 
