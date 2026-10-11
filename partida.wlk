@@ -27,15 +27,35 @@ object partida{
 
     method prepararPartida() {
         jugando = true
-
+        nivelActual = nivel1
         self.limpiarTablero()
         self.prepararJugador()
         self.prepararEnemigos()
         self.ocultarPantallas()
     }
 
-    //# Preparación de la partida
+    method verificarNivelCompletado(){
+        if(jugando && enemigos.isEmpty()){
+            self.avanzarNivel()
+        }
+    }
 
+    method avanzarNivel(){
+        if(nivelActual == nivel1){
+            nivelActual = nivel2
+            self.prepararEnemigos()
+        }
+        else if(nivelActual == nivel2){
+            nivelActual = nivel3
+            self.prepararEnemigos()
+        }
+        else{
+            jugando = false
+            pantallaWin.mostrar()
+        }
+    }
+
+    //# Preparación de la partida
     method prepararJugador() {
         game.addVisual(naveJugador)
         naveJugador.reiniciar()

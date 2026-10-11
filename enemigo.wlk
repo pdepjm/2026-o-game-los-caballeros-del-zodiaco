@@ -47,7 +47,9 @@ class Enemigo{
 
         //Se borra el objeto de la partida
         partida.enemigos().remove(self)
-        //game.removeVisual(self)
+        
+        //Cuando se muere el enemigo verifica si ya paso de nivel
+        partida.verificarNivelCompletado()
     }
     
 }
