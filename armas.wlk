@@ -1,4 +1,7 @@
+import wollok.game.*
 import jugador.*
+import partida.*
+
 object proyectil{
     var property position = game.at(-10,-10)
     var property imagen = "bala.png"
@@ -33,14 +36,23 @@ object proyectil{
 object manejoDeDisparo {
     
     method disparar(arma, nave, enemigos) {
-        proyectil.dispararDesde(nave)
-        proyectil.imagen(arma.imagen())
+        //Solo dispara si el arma esta disponible
+        if (arma.estaDisponible()){
+            proyectil.dispararDesde(nave)
+            proyectil.imagen(arma.imagen())
 
-        const objetivo = self.objetivoMasCercano(nave, enemigos)
+            const objetivo = self.objetivoMasCercano(nave, enemigos)
 
-        if (objetivo != null) {
-            self.impactar(arma, objetivo)
+            if (objetivo != null) {
+                self.impactar(arma, objetivo)
+            }
+
+            arma.usar()
+            return true //Avisa si el disparo se ejecuto
+        }else{
+            return false //Avisa que el disparo NO se ejecuto por cooldown
         }
+        
     }
 
     method estaEnLinea(nave, enemigo) = nave.position().x() == enemigo.position().x()
@@ -54,18 +66,79 @@ object manejoDeDisparo {
 
         return enemigosEnLinea.min({enemigo => enemigo.position().y()})
     }
-
-    //Recibe arma y enemigo -> Cambia la imagen y el enemigo recibe danio segun arma
+    
     method impactar(arma, enemigo){
-        enemigo.recibirDanio(arma)
+        arma.impactar(enemigo)
     }
 }
 
 class Arma{
     const imagen
+    const turnosDeRecarga
+    var turnosRestantes = 0
+    const property danioBase //Uso de property para desmarcar el error "Unused variable". No afecta al funcionamiento.
     method imagen() = imagen
+
+    //Varia segun lo especificado por cada arma
+    method impactar(objetivo)
+
+    method estaDisponible() = turnosRestantes == 0
+
+    //Una vez disparada el arma, entra en recarga
+    method usar(){
+        turnosRestantes = turnosDeRecarga
+    }
+
+    //Reduce el cooldown en 1
+    method enfriar(){
+        if (turnosRestantes > 0){
+            turnosRestantes -= 1
+        }
+    }
+
+    method reiniciarCooldown(){
+        turnosRestantes = 0
+    }
+
 }
 
-const bala = new Arma(imagen = "armas/bala.png")
-const laser = new Arma(imagen = "armas/laser.png")
-const cohete = new Arma(imagen = "armas/cohete.png")
+//#Bala
+
+object bala inherits Arma(imagen = "armas/bala.png", danioBase = 50, turnosDeRecarga = 0){
+
+    override method impactar(objetivo){
+        objetivo.recibirDanio(danioBase)
+    }
+}
+
+object laser inherits Arma(imagen = "armas/laser.png", danioBase = 150, turnosDeRecarga = 2){
+
+    override method impactar(objetivo){
+        objetivo.recibirDanio(danioBase)
+
+        //Calcula la posicion siguiente en la columna
+        const posicionAtras = objetivo.position().up(1)
+
+        //Arma una lista con el enemigo de detras y le hace el daño. Evita errores ante listas vacias.
+        partida.enemigos()
+            .filter({enemigo => enemigo.position() == posicionAtras})
+            .forEach({enemigo => enemigo.recibirDanio(danioBase)})
+    }
+}
+
+object cohete inherits Arma(imagen = "armas/cohete.png", danioBase = 200, turnosDeRecarga = 4){
+    
+    override method impactar(objetivo){
+        objetivo.recibirDanio(danioBase)
+
+        //Arma una lista con los enemigos adyacente y le hace el daño. Tambien evita errores ante listas vacias.
+        partida.enemigos()
+            .filter({enemigo => self.esAdyacente(enemigo, objetivo)})
+            .forEach({enemigo => enemigo.recibirDanio(danioBase / 2)})
+    }
+
+    //Verifica si los enemigos son adyacentes al impactado (distancia = 1)
+    method esAdyacente(enemigo, centroExplosion){
+        return enemigo.position().distance(centroExplosion.position()) == 1
+    }
+}

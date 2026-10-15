@@ -22,11 +22,6 @@ program juego {
     }
     game.addVisual(proyectil)
 
-    //Movimiento de Enemigos por turno de jugador
-    keyboard.space().onPressDo{
-        partida.turnoJugadorTerminado()
-    }
-
     proyectil.iniciar()
 
 	controlesJugador.configuracion()

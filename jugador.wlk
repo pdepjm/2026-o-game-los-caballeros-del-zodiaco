@@ -25,7 +25,13 @@ object naveJugador{
 
     //#Disparo
     method disparar(enemigos){
-        manejoDeDisparo.disparar(armaSeleccionada, self, enemigos)
+        //Guarda el resultado del disparo (true o false)
+        const disparoExitoso = manejoDeDisparo.disparar(armaSeleccionada, self, enemigos)
+
+        //Solo avanza el turno si el disparo se ejecuto
+        if (disparoExitoso){
+            partida.turnoJugadorTerminado()
+        }
     }
 
     //Arma por defecto
@@ -39,6 +45,15 @@ object naveJugador{
     method reiniciar(){
         position = posicionInicial
         self.enderezar()
+
+        //Reiniciamos todos los cooldowns
+        armamento.forEach({arma => arma.reiniciarCooldown()})
+    }
+
+    const armamento = [bala, laser, cohete]
+
+    method enfriarArmas(){
+        armamento.forEach({arma => arma.enfriar()})
     }
 
 }

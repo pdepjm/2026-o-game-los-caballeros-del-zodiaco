@@ -22,14 +22,8 @@ class Enemigo{
 
     //#Daño y muerte
     
-    method recibirDanio(arma){
-        //Si es atacado con su debilidad, muere. De lo contrario, se le inflinge la mitad del daño.
-        if(arma == debilidad){
-            vida = vida - 100
-        }
-        else{
-            vida = vida - 50
-        }
+    method recibirDanio(cantidad){
+        vida = vida - cantidad
 
         //Cada vez que recibe daño se verifica si muere
         if(self.estaMuerto()){

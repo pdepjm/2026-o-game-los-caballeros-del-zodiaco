@@ -96,6 +96,9 @@ object partida{
     method turnoJugadorTerminado() {
         enemigos.forEach{ enemigo => enemigo.mover()}
 
+        //Se reduce el cooldown de las armas
+        naveJugador.enfriarArmas()
+
         //Comprueba la muerte del jugador
         self.verificarGameOver()
     }
