@@ -1,3 +1,4 @@
+import jugador.*
 import partida.*
 import armas.*
 class Enemigo{
@@ -5,7 +6,7 @@ class Enemigo{
     //#Variables
 
     var property position
-    var property vida 
+    var property vida
     const property debilidad
     const imagen 
     method image() = imagen
@@ -18,7 +19,6 @@ class Enemigo{
         position = position.down(1)
     }
 
-    method vidaInicial()
 
     //#Daño y muerte
     
@@ -80,14 +80,38 @@ object fabricaEnemigoSuperFuerte {
         )
     }
 }
+
 class EnemigoComun inherits Enemigo {
-    override method vidaInicial() = 100
+    override method recibirDanio(cantidad){
+        super(cantidad * 1.5)
+    }
 }
 
 class EnemigoFuerte inherits Enemigo {
-    override method vidaInicial() = 150
-}
+    const armadura = 25
 
+    method calcularDanio(cantidad) {
+        if(cantidad > armadura){
+            return cantidad - armadura
+        } 
+        else{
+            return 0
+        }
+    }
+
+    override method recibirDanio(cantidad) {
+        super(self.calcularDanio(cantidad))
+    }
+}
 class EnemigoSuperFuerte inherits Enemigo {
-   override method vidaInicial() = 200
+   var tieneEscudo = true
+
+    override method recibirDanio(cantidad) {
+        if(tieneEscudo){
+            tieneEscudo = false
+        }
+        else{
+            super(cantidad)
+        }
+    }
 }
