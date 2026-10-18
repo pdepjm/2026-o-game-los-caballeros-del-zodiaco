@@ -1,0 +1,181 @@
+@startuml DiagramaDeClases_WollokInvaders
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    ArrowColor #2B2D42
+}
+
+class Enemigo {
+    + image()
+    + mover()
+    + recibirDanio(cantidad)
+    + estaMuerto() : Boolean
+    + morir()
+}
+
+class EnemigoComun extends Enemigo {
+    + recibirDanio(cantidad)
+}
+
+class EnemigoFuerte extends Enemigo {
+    + calcularDanio(cantidad)
+    + recibirDanio(cantidad)
+}
+
+class EnemigoSuperFuerte extends Enemigo {
+    + recibirDanio(cantidad)
+}
+
+object fabricaEnemigoComun {
+    + crear(posicion) : EnemigoComun
+}
+
+object fabricaEnemigoFuerte {
+    + crear(posicion) : EnemigoFuerte
+}
+
+object fabricaEnemigoSuperFuerte {
+    + crear(posicion) : EnemigoSuperFuerte
+}
+
+abstract class Arma {
+    + danioBase()
+    + imagen()
+    {abstract} + impactar(objetivo)
+    + estaDisponible() : Boolean
+    + usar()
+    + enfriar()
+    + reiniciarCooldown()
+}
+
+object bala {
+    + impactar(objetivo)
+}
+
+object laser {
+    + impactar(objetivo)
+}
+
+object cohete {
+    + impactar(objetivo)
+    + esAdyacente(enemigo, centroExplosion) : Boolean
+}
+
+Arma <|-- bala
+Arma <|-- laser
+Arma <|-- cohete
+
+object proyectil {
+    + image()
+    + dispararDesde(naveJugador)
+    + mover()
+    + iniciar()
+}
+
+object manejoDeDisparo {
+    + disparar(arma, nave, enemigos) : Boolean
+    + estaEnLinea(nave, enemigo) : Boolean
+    + objetivoMasCercano(nave, enemigos)
+    + impactar(arma, enemigo)
+}
+
+object naveJugador {
+    + mover(movimiento)
+    + image()
+    + cambiarImagen(nuevaImagen)
+    + enderezar()
+    + disparar(enemigos)
+    + seleccionarArma(arma)
+    + reiniciar()
+    + enfriarArmas()
+}
+
+object controlesJugador {
+    + configuracion()
+    + detenerMovimiento()
+}
+
+class Movimiento {
+    + mover(nave)
+}
+
+object izquierda {
+    + nuevaPosicion(posicion)
+}
+
+object derecha {
+    + nuevaPosicion(posicion)
+}
+
+object mapa {
+    + configuracionMapa()
+    + posicionValidaJugador(posicion) : Boolean
+    + posicionValidaEnemigo(enemigos)
+    + generarEnemigos(nivel)
+    + agregarEnemigos(enemigos)
+    + algunEnemigoLlegoAlJugador(enemigos) : Boolean
+}
+
+class Nivel {
+    + cantidadDeEnemigos()
+    + tipoDeEnemigo()
+}
+
+object partida {
+    + iniciar()
+    + reiniciar()
+    + prepararPartida()
+    + verificarNivelCompletado()
+    + avanzarNivel()
+    + prepararJugador()
+    + prepararEnemigos()
+    + ocultarPantallas()
+    + limpiarTablero()
+    + turnoJugadorTerminado()
+    + verificarGameOver()
+    + gameOver()
+}
+
+class Pantalla {
+    + position()
+    + image()
+    + mostrar()
+    + ocultar()
+}
+
+object aleatorio {
+    + generarNumeroAleatorio(minimo, maximo)
+}
+
+' Jugador y Armas
+naveJugador "1" o-- "*" Arma : armamento
+naveJugador "1" --> "1" Arma : armaSeleccionada
+naveJugador ..> manejoDeDisparo : utiliza
+
+' Disparo y Combate
+manejoDeDisparo ..> proyectil : anima
+manejoDeDisparo ..> Arma : usa
+manejoDeDisparo ..> Enemigo : impacta
+
+' Partida y Estado del Juego
+partida "1" o-- "*" Enemigo : enemigos
+partida "1" --> "1" Nivel : nivelActual
+partida ..> Pantalla : muestra / oculta
+
+' Niveles, Fábricas y Mapa
+Nivel "1" o-- "*" fabricaEnemigoComun : tiposDeEnemigo
+Nivel "1" o-- "*" fabricaEnemigoFuerte : tiposDeEnemigo
+Nivel "1" o-- "*" fabricaEnemigoSuperFuerte : tiposDeEnemigo
+mapa ..> Nivel : usa
+mapa ..> aleatorio : usa
+
+' Controladores y Movimiento
+Movimiento --> izquierda
+Movimiento --> derecha
+controlesJugador ..> Movimiento : usa
+controlesJugador ..> naveJugador : controla
+
+@enduml
