@@ -108,7 +108,7 @@ describe "Tests para Wollok Invaders" {
 
         naveJugador.disparar(partida.enemigos())
 
-        assert.equals(0, objetivo.vida())
+        assert.equals(true, objetivo.estaMuerto())
     }
 
     test "El cambio de turno mueve a los enemigos hacia abajo" {
