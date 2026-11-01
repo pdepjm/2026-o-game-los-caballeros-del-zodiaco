@@ -76,10 +76,16 @@ object fabricaEnemigoSuperFuerte {
 
 class EnemigoVeloz inherits Enemigo {
 
+    const curacionXMovimiento = 1.1 * vida
+
     //El enemigo avanza dos casillas por turno
     override method mover() {
         super()
-        super()
+        self.curarse()
+    }
+
+    method curarse(){
+        vida = vida + curacionXMovimiento
     }
 
     override method recibirDanio(cantidad){
