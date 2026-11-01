@@ -126,7 +126,7 @@ object laser inherits Arma(imagen = "armas/laser.png", danioBase = 150, turnosDe
     }
 }
 
-object cohete inherits Arma(imagen = "armas/cohete.png", danioBase = 200, turnosDeRecarga = 4){
+object cohete inherits Arma(imagen = "armas/cohete.png", danioBase = 200, turnosDeRecarga = 3){
     
     override method impactar(objetivo){
         objetivo.recibirDanio(danioBase)

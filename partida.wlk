@@ -6,53 +6,72 @@ import armas.*
 import mapa.*
 import nivel.*
 
-object partida{
-    //#Estado de la partida
-    var nivelActual = nivel1
-    var jugando = false
-    var property enemigos = []
+class EstadoPartida {
 
-    //#Inicio  y reinicio de partida
-    
-    method iniciar() {
-        if (!jugando) {
-            self.prepararPartida()
+    //Cada estado responde únicamente a los mensajes que tienen sentido en su contexto
+    //Los métodos vacíos evitan ejecutar comportamientos que no corresponden al estado actual
+    method iniciar() {}
+    method verificarNivelCompletado() {}
+    method gameOver() {}
+}
+
+object estadoMenu inherits EstadoPartida {
+    override method iniciar() {
+        partida.prepararPartida()
+    }
+}
+
+object estadoJugando inherits EstadoPartida {
+    override method verificarNivelCompletado() {
+        if (partida.enemigos().isEmpty()) {
+            partida.avanzarNivel()
         }
     }
 
-    method reiniciar(){
-        nivelActual = nivel1
+    override method gameOver() {
+        partida.finalizarPartida()
+    }
+}
+
+object estadoGameOver inherits EstadoPartida {
+    override method iniciar() {
+        partida.prepararPartida()
+    }
+}
+
+object partida {
+    //# Estado de la partida
+    var nivelActual = new Nivel(nivel = 1)
+    var estadoActual = estadoMenu
+    var property enemigos = []
+
+    //#Inicio y reinicio de la partida
+
+    method iniciar() {
+        estadoActual.iniciar()
+    }
+
+    method reiniciar() {
+        nivelActual = new Nivel(nivel = 1)
         self.prepararPartida()
     }
 
     method prepararPartida() {
-        jugando = true
-        nivelActual = nivel1
+        nivelActual = new Nivel(nivel = 1)
         self.limpiarTablero()
         self.prepararJugador()
         self.prepararEnemigos()
         self.ocultarPantallas()
+        estadoActual = estadoJugando
     }
 
-    method verificarNivelCompletado(){
-        if(jugando && enemigos.isEmpty()){
-            self.avanzarNivel()
-        }
+    method verificarNivelCompletado() {
+        estadoActual.verificarNivelCompletado()
     }
 
     method avanzarNivel(){
-        if(nivelActual == nivel1){
-            nivelActual = nivel2
-            self.prepararEnemigos()
-        }
-        else if(nivelActual == nivel2){
-            nivelActual = nivel3
-            self.prepararEnemigos()
-        }
-        else{
-            jugando = false
-            pantallaWin.mostrar()
-        }
+        nivelActual = new Nivel(nivel = nivelActual.nivel() + 1)
+        self.prepararEnemigos()
     }
 
     //# Preparación de la partida
@@ -71,35 +90,46 @@ object partida{
         pantallaGameover.ocultar()
     }
 
+    method eliminarEnemigo(enemigo) {
+
+    //Quita al enemigo del tablero si todavía está visible
+    if (game.hasVisual(enemigo)) {
+        game.removeVisual(enemigo)
+    }
+
+    //Se elimina de la partida
+    enemigos.remove(enemigo)
+
+    //Comprueba si corresponde avanzar de nivel
+    self.verificarNivelCompletado()
+}
+
     //# Limpieza
 
+    //Verifica que la nave este en pantalla antes de sacarla
     method limpiarTablero() {
-        //Verifica que la nave este en pantalla antes de sacarla
         if (game.hasVisual(naveJugador)){
             game.removeVisual(naveJugador)
         }
-        
-        //Verifica y borra a cada enemigo que haya quedado vivo
-        enemigos.forEach({ enemigo => 
-            if (game.hasVisual(enemigo)) { 
-                game.removeVisual(enemigo) 
+
+    //Verifica y borra a cada enemigo que haya quedado vivo
+        enemigos.forEach({ enemigo =>
+            if (game.hasVisual(enemigo)) {
+                game.removeVisual(enemigo)
             }
         })
-        
+
         //Vacia la lista para empezar de cero
-        enemigos.clear() 
+        enemigos.clear()
     }
 
     //#Turnos
 
-    //Termina el turno del jugador -> avanzan los enemigos 
+    //Termina el turno del jugador y avanzan los enemigos
     method turnoJugadorTerminado() {
         enemigos.forEach{ enemigo => enemigo.mover()}
 
-        //Se reduce el cooldown de las armas
         naveJugador.enfriarArmas()
-
-        //Comprueba la muerte del jugador
         self.verificarGameOver()
     }
 
@@ -111,12 +141,13 @@ object partida{
         }
     }
 
-    method gameOver(){
-        //Cambio a false para que no aprete espacio
-        jugando = false
-
-        //Pantalla de game over
-        pantallaGameover.mostrar()
+    method gameOver() {
+        estadoActual.gameOver()
     }
 
+    method finalizarPartida() {
+        self.limpiarTablero()
+        estadoActual = estadoGameOver
+        pantallaGameover.mostrar()
+    }
 }

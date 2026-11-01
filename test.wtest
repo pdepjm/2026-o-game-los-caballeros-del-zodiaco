@@ -2,12 +2,13 @@ import jugador.*
 import enemigo.*
 import armas.*
 import partida.*
+import nivel.*
 import wollok.game.*
 
 
 describe "Tests para Wollok Invaders" {
 
-    const enemigoLejos = new EnemigoComun(
+    const enemigoLejos = new EnemigoVeloz(
         vida = 100,
         position = game.at(5, 12),
         imagen = "enemigoComun.png",
@@ -92,8 +93,8 @@ describe "Tests para Wollok Invaders" {
         assert.equals(100, enemigoCerca.vida())
     }
 
-    test "El laser elimina a un enemigo comun con 100 de vida" {
-        const objetivo = new EnemigoComun(
+    test "El laser elimina a un enemigo veloz con 100 de vida" {
+        const objetivo = new EnemigoVeloz(
             vida = 100,
             position = game.at(3, 8),
             imagen = "enemigoComun.png",
@@ -108,7 +109,7 @@ describe "Tests para Wollok Invaders" {
 
         naveJugador.disparar(partida.enemigos())
 
-        assert.equals(0, objetivo.vida())
+        assert.equals(true, objetivo.estaMuerto())
     }
 
     test "El cambio de turno mueve a los enemigos hacia abajo" {
@@ -120,5 +121,41 @@ describe "Tests para Wollok Invaders" {
             posicionInicialY - 1,
             enemigoLejos.position().y()
         )
+    }
+
+    test "El enemigo fuerte empieza con 150 de vida en el nivel 3" {
+    const enemigo = fabricaEnemigoFuerte.crear(game.at(0, 10), 3)
+
+    assert.equals(150, enemigo.vida())
+}
+
+test "El enemigo fuerte tiene 165 de vida en el nivel 4" {
+    const enemigo = fabricaEnemigoFuerte.crear(game.at(0, 10), 4)
+
+    assert.equals(165, enemigo.vida())
+}
+
+test "El enemigo SuperFuerte tiene 242 de vida en el nivel 7" {
+    const enemigo = fabricaEnemigoSuperFuerte.crear(game.at(0, 10), 7)
+
+    assert.equals(242, enemigo.vida())
+}
+
+    test "En el nivel 1 solo está disponible el veloz" {
+        const nivel = new Nivel(nivel = 1)
+        const tipos = nivel.tiposDeEnemigoDisponibles()
+
+        assert.equals(1, tipos.size())
+        assert.that(tipos.contains(fabricaEnemigoVeloz))
+    }
+
+    test "En el nivel 5 aparece el super fuerte" {
+        const nivel = new Nivel(nivel = 5)
+        const tipos = nivel.tiposDeEnemigoDisponibles()
+
+        assert.that(tipos.contains(fabricaEnemigoVeloz))
+        assert.that(tipos.contains(fabricaEnemigoFuerte))
+        assert.that(tipos.contains(fabricaEnemigoSuperFuerte))
+        assert.equals(3, tipos.size())
     }
 }

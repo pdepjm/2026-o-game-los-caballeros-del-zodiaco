@@ -17,5 +17,3 @@ class Pantalla {
 
 const menu = new Pantalla(imagen = "pantallas/menu.png")
 const pantallaGameover = new Pantalla(imagen = "pantallas/gameover.png")
-const pantallaWin = new Pantalla(imagen = "pantallas/menu.png")
-

@@ -1,24 +1,48 @@
 import utilidades.*
 import enemigo.*
-class Nivel {
-    const cantidadMinimaEnemigos
-    const cantidadMaximaEnemigos
-    const tiposDeEnemigo
 
-    //Determina la cantidad de enemigos del nivel
+class Nivel {
+    const property nivel
+    const capacidadMaximaEnemigos = 24
+
+    //La cantidad crece con el nivel
+    method cantidadMinimaEnemigos() {
+        if (nivel > capacidadMaximaEnemigos) {
+            return capacidadMaximaEnemigos
+        }
+        return nivel
+    }
+
+    method cantidadMaximaEnemigos() {
+        const cantidadPropuesta = nivel + 1
+        if (cantidadPropuesta > capacidadMaximaEnemigos) {
+            return capacidadMaximaEnemigos
+        }
+        return cantidadPropuesta
+    }
+
     method cantidadDeEnemigos() {
         return aleatorio.generarNumeroAleatorio(
-            cantidadMinimaEnemigos,
-            cantidadMaximaEnemigos
+            self.cantidadMinimaEnemigos(),
+            self.cantidadMaximaEnemigos()
         )
     }
 
-    //Devuelve una fábrica de enemigo elegida al azar
+    //Los tipos disponibles se amplian gradualmente
+    method tiposDeEnemigoDisponibles() {
+        const tipos = [fabricaEnemigoVeloz]
+
+        if (nivel >= 3) {
+            tipos.add(fabricaEnemigoFuerte)
+        }
+        if (nivel >= 5) {
+            tipos.add(fabricaEnemigoSuperFuerte)
+        }
+
+        return tipos
+    }
+
     method tipoDeEnemigo() {
-        return tiposDeEnemigo.anyOne()
+        return self.tiposDeEnemigoDisponibles().anyOne()
     }
 }
-
-const nivel1 = new Nivel(cantidadMinimaEnemigos = 1, cantidadMaximaEnemigos = 3, tiposDeEnemigo = [fabricaEnemigoComun])
-const nivel2 = new Nivel(cantidadMinimaEnemigos = 4, cantidadMaximaEnemigos = 6, tiposDeEnemigo = [fabricaEnemigoComun, fabricaEnemigoFuerte])
-const nivel3 = new Nivel(cantidadMinimaEnemigos = 7, cantidadMaximaEnemigos = 9, tiposDeEnemigo = [fabricaEnemigoComun, fabricaEnemigoFuerte, fabricaEnemigoSuperFuerte])

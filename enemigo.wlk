@@ -35,22 +35,15 @@ class Enemigo{
         return vida <= 0
     }
 
-    method morir(){
-        //Desaparece la nave
-        game.removeVisual(self)
-
-        //Se borra el objeto de la partida
-        partida.enemigos().remove(self)
-        
-        //Cuando se muere el enemigo verifica si ya paso de nivel
-        partida.verificarNivelCompletado()
-    }
+   method morir() {
+    partida.eliminarEnemigo(self)
+}
     
 }
 
-object fabricaEnemigoComun {
-    method crear(posicion) {
-        return new EnemigoComun(
+object fabricaEnemigoVeloz {
+    method crear(posicion, nivel) {
+        return new EnemigoVeloz(
             vida = 100,
             position = posicion,
             imagen = "enemigos/enemigoComun.png",
@@ -60,7 +53,7 @@ object fabricaEnemigoComun {
 }
 
 object fabricaEnemigoFuerte {
-    method crear(posicion) {
+    method crear(posicion, nivel) {
         return new EnemigoFuerte(
             vida = 150,
             position = posicion,
@@ -71,9 +64,9 @@ object fabricaEnemigoFuerte {
 }
 
 object fabricaEnemigoSuperFuerte {
-    method crear(posicion) {
+    method crear(posicion, nivel) {
         return new EnemigoSuperFuerte(
-            vida = 200,
+            vida = 200 * (1.1 ** (nivel - 5)),
             position = posicion,
             imagen = "enemigos/enemigoSuperFuerte.png",
             debilidad = cohete
@@ -81,7 +74,14 @@ object fabricaEnemigoSuperFuerte {
     }
 }
 
-class EnemigoComun inherits Enemigo {
+class EnemigoVeloz inherits Enemigo {
+
+    //El enemigo avanza dos casillas por turno
+    override method mover() {
+        super()
+        super()
+    }
+
     override method recibirDanio(cantidad){
         super(cantidad * 1.5)
     }
@@ -105,6 +105,13 @@ class EnemigoFuerte inherits Enemigo {
 }
 class EnemigoSuperFuerte inherits Enemigo {
    var tieneEscudo = true
+
+    override method image() {
+        if (tieneEscudo) {
+            return "enemigos/enemigoSuperFuerte_Escudo.png"
+        }
+        return "enemigos/enemigoSuperFuerte.png"
+    }
 
     override method recibirDanio(cantidad) {
         if(tieneEscudo){
