@@ -35,10 +35,10 @@ class Enemigo{
         return vida <= 0
     }
 
-   method morir() {
-    partida.eliminarEnemigo(self)
-}
-    
+    method morir() {
+        partida.eliminarEnemigo(self)
+    }
+        
 }
 
 object fabricaEnemigoVeloz {
@@ -76,7 +76,8 @@ object fabricaEnemigoSuperFuerte {
 
 class EnemigoVeloz inherits Enemigo {
 
-    const curacionXMovimiento = 1.1 * vida
+    const vidaMaxima = 150
+    var curacionXMovimiento = 0.1 * vida
 
     //El enemigo avanza dos casillas por turno
     override method mover() {
@@ -85,7 +86,9 @@ class EnemigoVeloz inherits Enemigo {
     }
 
     method curarse(){
-        vida = vida + curacionXMovimiento
+        if (vida < vidaMaxima){
+            vida = vida + curacionXMovimiento
+        }
     }
 
     override method recibirDanio(cantidad){
