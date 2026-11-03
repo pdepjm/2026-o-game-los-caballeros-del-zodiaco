@@ -2,73 +2,94 @@ import wollok.game.*
 import jugador.*
 import partida.*
 
-object proyectil{
-    var property position = game.at(-10,-10)
-    var property imagen = "bala.png"
+object proyectil {
+    var property position = game.at(-10, -10)
+    var imagen = "bala.png"
+
     var moviendose = false
+    var armaActual = bala
+    var enemigosActuales = []
 
     method image() = imagen
 
-    method dispararDesde(naveJugador){
-        position = naveJugador.position()
+    method estaMoviendose() = moviendose
+
+    method dispararDesde(nave, arma, enemigos) {
+        position = nave.position()
+        imagen = arma.imagen()
+        armaActual = arma
+        enemigosActuales = enemigos
         moviendose = true
     }
 
-    method mover(){
-        if(moviendose){
-            if(position.y() < game.height()){
+    //# Movimiento
+
+    method mover() {
+        if (moviendose) {
+            if (self.puedeAvanzar()) {
                 position = position.up(1)
-            }
-            else{
-                moviendose = false
+            } else {
+                self.ocultar()
             }
         }
     }
 
-    //Movimiento continuo
-    const tickProyectil = game.tick(20, {self.mover()}, false)
+    method puedeAvanzar() {
+        return position.y() < game.height() - 1
+    }
 
-    method iniciar(){
+    //# Colisiones
+
+    method colisionarCon(objetivo) {
+        if (moviendose && self.esObjetivoValido(objetivo)) {
+            armaActual.impactar(objetivo)
+            self.ocultar()
+        }
+    }
+
+    method esObjetivoValido(objetivo) {
+        return enemigosActuales.contains(objetivo)
+    }
+
+    //# Finalización
+
+    method ocultar() {
+        moviendose = false
+        position = game.at(-10, -10)
+    }
+
+    const tickProyectil = game.tick(20, { self.mover() }, false)
+
+    method iniciar() {
+        if (!game.hasVisual(self)) {
+            game.addVisual(self)
+        }
+
+        game.onCollideDo(self, { elemento =>
+            self.colisionarCon(elemento)
+        })
+
         tickProyectil.start()
     }
 }
 
 object manejoDeDisparo {
-    
+
     method disparar(arma, nave, enemigos) {
-        //Solo dispara si el arma esta disponible
-        if (arma.estaDisponible()){
-            proyectil.dispararDesde(nave)
-            proyectil.imagen(arma.imagen())
-
-            const objetivo = self.objetivoMasCercano(nave, enemigos)
-
-            if (objetivo != null) {
-                self.impactar(arma, objetivo)
-            }
+        if (self.puedeDisparar(arma)) {
+            proyectil.dispararDesde(nave, arma, enemigos)
 
             arma.usar()
-            return true //Avisa si el disparo se ejecuto
-        }else{
-            return false //Avisa que el disparo NO se ejecuto por cooldown
+
+            return true
+        } 
+        else {
+            return false
         }
-        
     }
 
-    method estaEnLinea(nave, enemigo) = nave.position().x() == enemigo.position().x()
-
-    method objetivoMasCercano(nave, enemigos) {
-        const enemigosEnLinea = enemigos.filter({enemigo => self.estaEnLinea(nave, enemigo)})
-
-        if (enemigosEnLinea.isEmpty()) {
-            return null
-        }
-
-        return enemigosEnLinea.min({enemigo => enemigo.position().y()})
-    }
-    
-    method impactar(arma, enemigo){
-        arma.impactar(enemigo)
+    method puedeDisparar(arma) {
+        return arma.estaDisponible() && !proyectil.estaMoviendose()
     }
 }
 

@@ -77,7 +77,7 @@ object fabricaEnemigoSuperFuerte {
 class EnemigoVeloz inherits Enemigo {
 
     const vidaMaxima = 150
-    var curacionXMovimiento = 0.1 * vida
+    const curacionXMovimiento = 0.1 * vida
 
     //El enemigo avanza dos casillas por turno
     override method mover() {
