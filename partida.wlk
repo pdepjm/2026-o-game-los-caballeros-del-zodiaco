@@ -10,6 +10,7 @@ class EstadoPartida {
 
     //Cada estado responde únicamente a los mensajes que tienen sentido en su contexto
     //Los métodos vacíos evitan ejecutar comportamientos que no corresponden al estado actual
+    method estaJugando() = false
     method iniciar() {}
     method verificarNivelCompletado() {}
     method gameOver() {}
@@ -22,6 +23,8 @@ object estadoMenu inherits EstadoPartida {
 }
 
 object estadoJugando inherits EstadoPartida {
+    override method estaJugando() = true
+
     override method verificarNivelCompletado() {
         if (partida.enemigos().isEmpty()) {
             partida.avanzarNivel()
@@ -44,6 +47,7 @@ object partida {
     var nivelActual = new Nivel(nivel = 1)
     var estadoActual = estadoMenu
     var property enemigos = []
+    method estaJugando() = estadoActual.estaJugando()
 
     //#Inicio y reinicio de la partida
 
@@ -52,7 +56,6 @@ object partida {
     }
 
     method reiniciar() {
-        nivelActual = new Nivel(nivel = 1)
         self.prepararPartida()
     }
 

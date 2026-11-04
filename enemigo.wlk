@@ -1,13 +1,12 @@
 import jugador.*
 import partida.*
-import armas.*
+
 class Enemigo{
 
     //#Variables
 
     var property position
     var property vida
-    const property debilidad
     const imagen 
     method image() = imagen
 
@@ -46,30 +45,31 @@ object fabricaEnemigoVeloz {
         return new EnemigoVeloz(
             vida = 100,
             position = posicion,
-            imagen = "enemigos/enemigoComun.png",
-            debilidad = bala
+            imagen = "enemigos/enemigoComun.png"
         )
     }
 }
 
 object fabricaEnemigoFuerte {
+    method nivelAparicion() = 3
+
     method crear(posicion, nivel) {
         return new EnemigoFuerte(
             vida = 150,
             position = posicion,
-            imagen = "enemigos/enemigoFuerte.png",
-            debilidad = laser
+            imagen = "enemigos/enemigoFuerte.png"
         )
     }
 }
 
 object fabricaEnemigoSuperFuerte {
+    method nivelAparicion() = 5
+    
     method crear(posicion, nivel) {
         return new EnemigoSuperFuerte(
             vida = 200 * (1.1 ** (nivel - 5)),
             position = posicion,
-            imagen = "enemigos/enemigoSuperFuerte.png",
-            debilidad = cohete
+            imagen = "enemigos/enemigoSuperFuerte.png"
         )
     }
 }
@@ -119,7 +119,7 @@ class EnemigoSuperFuerte inherits Enemigo {
         if (tieneEscudo) {
             return "enemigos/enemigoSuperFuerte_Escudo.png"
         }
-        return "enemigos/enemigoSuperFuerte.png"
+        return super()
     }
 
     override method recibirDanio(cantidad) {

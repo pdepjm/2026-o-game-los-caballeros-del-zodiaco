@@ -11,7 +11,9 @@ class Pantalla {
     }
 
     method ocultar(){
-        game.removeVisual(self)
+        if (game.hasVisual(self)) {
+            game.removeVisual(self)
+        }
     }
 }
 

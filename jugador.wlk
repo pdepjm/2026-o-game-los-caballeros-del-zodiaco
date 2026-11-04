@@ -85,7 +85,9 @@ object controlesJugador {
 
         //#Otros
         keyboard.space().onPressDo {
-            naveJugador.disparar()
+            if(partida.estaJugando()){
+                naveJugador.disparar()  
+            }
         }
 
         keyboard.num1().onPressDo {

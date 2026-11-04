@@ -10,6 +10,8 @@ object mapa {
     const tamanioCelda = 64
     const rangoAparicionEnemigos = 3
     const posicionMinimaEnemigos = 13
+    
+    method capacidadMaximaGeneracion() = ancho * rangoAparicionEnemigos
 
     //Configuracion del mapa
     method configuracionMapa(){

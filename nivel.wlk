@@ -1,9 +1,10 @@
 import utilidades.*
 import enemigo.*
+import mapa.*
 
 class Nivel {
     const property nivel
-    const capacidadMaximaEnemigos = 24
+    const capacidadMaximaEnemigos = mapa.capacidadMaximaGeneracion()
 
     //La cantidad crece con el nivel
     method cantidadMinimaEnemigos() {
@@ -32,10 +33,10 @@ class Nivel {
     method tiposDeEnemigoDisponibles() {
         const tipos = [fabricaEnemigoVeloz]
 
-        if (nivel >= 3) {
+        if (nivel >= fabricaEnemigoFuerte.nivelAparicion()) {
             tipos.add(fabricaEnemigoFuerte)
         }
-        if (nivel >= 5) {
+        if (nivel >= fabricaEnemigoSuperFuerte.nivelAparicion()) {
             tipos.add(fabricaEnemigoSuperFuerte)
         }
 

@@ -4,7 +4,7 @@ import partida.*
 
 object proyectil {
     var property position = game.at(-10, -10)
-    var imagen = "bala.png"
+    var imagen = "armas/bala.png"
 
     var moviendose = false
     var armaActual = bala
@@ -130,30 +130,30 @@ object bala inherits Arma(imagen = "armas/bala.png", danioBase = 50, turnosDeRec
 object laser inherits Arma(imagen = "armas/laser.png", danioBase = 150, turnosDeRecarga = 2){
 
     override method impactar(objetivo){
-        objetivo.recibirDanio(danioBase)
-
         //Calcula la posicion siguiente en la columna
         const posicionAtras = objetivo.position().up(1)
-
-        //Arma una lista con el enemigo de detras y le hace el daño. Evita errores ante listas vacias.
-        partida.enemigos()
-            .filter({enemigo => enemigo.position() == posicionAtras})
-            .forEach({enemigo => enemigo.recibirDanio(danioBase)})
+        
+        //Arma una lista con el enemigo de detras
+        const enemigosAtras = partida.enemigos().filter({enemigo => enemigo.position() == posicionAtras})
+        
+        //Realiza los daños
+        objetivo.recibirDanio(danioBase)
+        enemigosAtras.forEach({enemigo => enemigo.recibirDanio(danioBase)})
     }
 }
 
 object cohete inherits Arma(imagen = "armas/cohete.png", danioBase = 200, turnosDeRecarga = 3){
     
     override method impactar(objetivo){
-        objetivo.recibirDanio(danioBase)
+        //Arma una lista con los enemigos adyacentes
+        const adyacentes = partida.enemigos().filter({enemigo => self.esAdyacente(enemigo, objetivo)})
 
-        //Arma una lista con los enemigos adyacente y le hace el daño. Tambien evita errores ante listas vacias.
-        partida.enemigos()
-            .filter({enemigo => self.esAdyacente(enemigo, objetivo)})
-            .forEach({enemigo => enemigo.recibirDanio(danioBase / 2)})
+        //Realiza los daños
+        objetivo.recibirDanio(danioBase)
+        adyacentes.forEach({enemigo => enemigo.recibirDanio(danioBase / 2)})
     }
 
-    //Verifica si los enemigos son adyacentes al impactado (distancia = 1)
+    //Calculo de enemigos adyacentes
     method esAdyacente(enemigo, centroExplosion){
         return enemigo.position().distance(centroExplosion.position()) == 1
     }
