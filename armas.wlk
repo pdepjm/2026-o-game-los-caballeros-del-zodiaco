@@ -14,7 +14,7 @@ object proyectil {
     method estaMoviendose() = moviendose
 
     method dispararDesde(nave, arma) {
-        position = nave.position().up(1)
+        position = nave.position()
         imagen = arma.imagen()
         armaActual = arma
         moviendose = true
@@ -28,14 +28,14 @@ object proyectil {
     //# Movimiento
 
     method mover() {
-        if (moviendose) {
-            if (self.puedeAvanzar()) {
-                position = position.up(1)
-            } else {
-                self.ocultar()
-            }
+    if (moviendose) {
+        if (self.puedeAvanzar()) {
+            position = position.up(1)
+        } else {
+            self.finalizarDisparo() // <-- Oculta la bala Y pasa el turno aunque hayas errado
         }
     }
+}
 
     method puedeAvanzar() {
         return position.y() < game.height() - 1

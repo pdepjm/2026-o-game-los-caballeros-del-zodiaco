@@ -67,7 +67,7 @@ object fabricaEnemigoSuperFuerte {
     
     method crear(posicion, nivel) {
         return new EnemigoSuperFuerte(
-            vida = 200 * (1.1 ** (nivel - 5)),
+            vida = 200 * (1.1 ** (nivel - self.nivelAparicion())),
             position = posicion,
             imagen = "enemigos/enemigoSuperFuerte.png"
         )
