@@ -8,18 +8,21 @@ object proyectil {
 
     var moviendose = false
     var armaActual = bala
-    var enemigosActuales = []
 
     method image() = imagen
 
     method estaMoviendose() = moviendose
 
-    method dispararDesde(nave, arma, enemigos) {
-        position = nave.position()
+    method dispararDesde(nave, arma) {
+        position = nave.position().up(1)
         imagen = arma.imagen()
         armaActual = arma
-        enemigosActuales = enemigos
         moviendose = true
+    }
+
+    method finalizarDisparo() {
+        self.ocultar()
+        partida.turnoJugadorTerminado()
     }
 
     //# Movimiento
@@ -41,15 +44,12 @@ object proyectil {
     //# Colisiones
 
     method colisionarCon(objetivo) {
-        if (moviendose && self.esObjetivoValido(objetivo)) {
+        if (moviendose) {
             armaActual.impactar(objetivo)
-            self.ocultar()
+            self.finalizarDisparo()
         }
     }
 
-    method esObjetivoValido(objetivo) {
-        return enemigosActuales.contains(objetivo)
-    }
 
     //# Finalización
 
@@ -75,22 +75,17 @@ object proyectil {
 
 object manejoDeDisparo {
 
-    method disparar(arma, nave, enemigos) {
-        if (self.puedeDisparar(arma)) {
-            proyectil.dispararDesde(nave, arma, enemigos)
-
+    method disparar(arma, nave){
+        if (arma.estaDisponible() && !proyectil.estaMoviendose()){
+            proyectil.dispararDesde(nave, arma)
             arma.usar()
-
             return true
         } 
-        else {
+        else{
             return false
         }
     }
 
-    method puedeDisparar(arma) {
-        return arma.estaDisponible() && !proyectil.estaMoviendose()
-    }
 }
 
 class Arma{

@@ -24,14 +24,8 @@ object naveJugador{
     }
 
     //#Disparo
-    method disparar(enemigos){
-        //Guarda el resultado del disparo (true o false)
-        const disparoExitoso = manejoDeDisparo.disparar(armaSeleccionada, self, enemigos)
-
-        //Solo avanza el turno si el disparo se ejecuto
-        if (disparoExitoso){
-            partida.turnoJugadorTerminado()
-        }
+    method disparar() {
+        manejoDeDisparo.disparar(armaSeleccionada, self)
     }
 
     //Arma por defecto
@@ -91,7 +85,7 @@ object controlesJugador {
 
         //#Otros
         keyboard.space().onPressDo {
-            naveJugador.disparar(partida.enemigos())
+            naveJugador.disparar()
         }
 
         keyboard.num1().onPressDo {
