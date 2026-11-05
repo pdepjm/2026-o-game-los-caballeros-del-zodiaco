@@ -105,7 +105,7 @@ object partida {
 
     //Comprueba si corresponde avanzar de nivel
     self.verificarNivelCompletado()
-}
+    }
 
     //# Limpieza
 
@@ -134,6 +134,13 @@ object partida {
 
         naveJugador.enfriarArmas()
         self.verificarGameOver()
+    }
+
+    //Permite al jugador disparar si la partida esta iniciada
+    method dispararJugador() {
+        if (self.estaJugando()) {
+            naveJugador.disparar()
+        }
     }
 
     //#Game over

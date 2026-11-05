@@ -55,7 +55,7 @@ object naveJugador{
 
 object controlesJugador {
 
-    var movimientoActual = null
+    var movimientoActual = sinMovimiento
 
     method configuracion() {
 
@@ -63,20 +63,13 @@ object controlesJugador {
         self.configurarMovimiento(keyboard.left(), movimientoIzquierda)
         self.configurarMovimiento(keyboard.right(), movimientoDerecha)
 
-        const tick = game.tick(75, {
-            if (movimientoActual != null) {
-                naveJugador.mover(movimientoActual)
-            }
-        }, false)
-
+        const tick = game.tick(75, {movimientoActual.mover(naveJugador)}, false)
         tick.start()
 
         //#Otros
 
         keyboard.space().onPressDo {
-            if (partida.estaJugando()) {
-                naveJugador.disparar()
-            }
+            partida.dispararJugador()
         }
 
         //#Seleccion de armas
@@ -109,11 +102,14 @@ object controlesJugador {
     }
 
     method detenerMovimiento() {
-        movimientoActual = null
+        movimientoActual = sinMovimiento
         naveJugador.enderezar()
     }
 }
 
+object sinMovimiento {
+    method mover(nave) {}
+}
 
 class Movimiento {
     const direccion
