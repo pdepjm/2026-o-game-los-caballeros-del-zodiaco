@@ -1,10 +1,11 @@
 import utilidades.*
 import enemigo.*
 import mapa.*
+import generadorEnemigos.*
 
 class Nivel {
     const property nivel
-    const capacidadMaximaEnemigos = mapa.capacidadMaximaGeneracion()
+    const capacidadMaximaEnemigos = generadorEnemigos.capacidadMaximaGeneracion()
 
     //La cantidad crece con el nivel
     method cantidadMinimaEnemigos() {

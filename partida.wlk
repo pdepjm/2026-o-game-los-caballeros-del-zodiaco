@@ -5,6 +5,7 @@ import game.*
 import armas.*
 import mapa.*
 import nivel.*
+import generadorEnemigos.*
 
 class EstadoPartida {
 
@@ -84,8 +85,12 @@ object partida {
     }
 
     method prepararEnemigos() {
-        enemigos = mapa.generarEnemigos(nivelActual)
-        mapa.agregarEnemigos(enemigos)
+        enemigos = generadorEnemigos.generarEnemigos(nivelActual)
+        self.agregarEnemigosAlTablero()
+    }
+
+    method agregarEnemigosAlTablero() {
+        enemigos.forEach { enemigo => game.addVisual(enemigo)}
     }
 
     method ocultarPantallas() {
@@ -145,8 +150,8 @@ object partida {
 
     //#Game over
 
-    method verificarGameOver(){
-        if(mapa.algunEnemigoLlegoAlJugador(enemigos)){
+    method verificarGameOver() {
+        if (enemigos.any({ enemigo => enemigo.position().y() <= 0})) {
             self.gameOver()
         }
     }
