@@ -52,6 +52,7 @@ object naveJugador{
 
 }
 
+
 object controlesJugador {
 
     var movimientoActual = null
@@ -59,21 +60,8 @@ object controlesJugador {
     method configuracion() {
 
         //#Movimiento
-        keyboard.left().onPressDo {
-            movimientoActual = movimientoIzquierda
-        }
-
-        keyboard.right().onPressDo {
-            movimientoActual = movimientoDerecha
-        }
-
-        keyboard.left().onReleaseDo {
-            self.detenerMovimiento()
-        }
-
-        keyboard.right().onReleaseDo {
-            self.detenerMovimiento()
-        }
+        self.configurarMovimiento(keyboard.left(), movimientoIzquierda)
+        self.configurarMovimiento(keyboard.right(), movimientoDerecha)
 
         const tick = game.tick(75, {
             if (movimientoActual != null) {
@@ -84,26 +72,39 @@ object controlesJugador {
         tick.start()
 
         //#Otros
+
         keyboard.space().onPressDo {
-            if(partida.estaJugando()){
-                naveJugador.disparar()  
+            if (partida.estaJugando()) {
+                naveJugador.disparar()
             }
         }
 
-        keyboard.num1().onPressDo {
-            naveJugador.seleccionarArma(bala)
-        }
+        //#Seleccion de armas
+        self.configurarSeleccionArma(keyboard.num1(), bala)
+        self.configurarSeleccionArma(keyboard.num2(), laser)
+        self.configurarSeleccionArma(keyboard.num3(), cohete)
 
-        keyboard.num2().onPressDo {
-            naveJugador.seleccionarArma(laser)
-        }
-
-        keyboard.num3().onPressDo {
-            naveJugador.seleccionarArma(cohete)
-        }
-
+        //#Reinicio
         keyboard.r().onPressDo {
             partida.reiniciar()
+        }
+    }
+
+    //#Configuracion de controles
+
+    method configurarMovimiento(tecla, movimiento) {
+        tecla.onPressDo {
+            movimientoActual = movimiento
+        }
+
+        tecla.onReleaseDo {
+            self.detenerMovimiento()
+        }
+    }
+
+    method configurarSeleccionArma(tecla, arma) {
+        tecla.onPressDo {
+            naveJugador.seleccionarArma(arma)
         }
     }
 
@@ -112,6 +113,7 @@ object controlesJugador {
         naveJugador.enderezar()
     }
 }
+
 
 class Movimiento {
     const direccion
