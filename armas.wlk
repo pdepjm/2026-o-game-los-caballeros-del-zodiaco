@@ -69,7 +69,15 @@ object proyectil {
             self.colisionarCon(elemento)
         })
 
+        self.iniciarTickProyectil()
+    }
+
+    method iniciarTickProyectil(){
         tickProyectil.start()
+    }
+
+    method detenerTickProyectil(){
+        tickProyectil.stop()
     }
 }
 
@@ -79,10 +87,6 @@ object manejoDeDisparo {
         if (arma.estaDisponible() && !proyectil.estaMoviendose()){
             proyectil.dispararDesde(nave, arma)
             arma.usar()
-            return true
-        } 
-        else{
-            return false
         }
     }
 

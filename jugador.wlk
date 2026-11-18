@@ -56,6 +56,7 @@ object naveJugador{
 object controlesJugador {
 
     var movimientoActual = sinMovimiento
+    var tickMovimiento = 0
 
     method configuracion() {
 
@@ -63,8 +64,8 @@ object controlesJugador {
         self.configurarMovimiento(keyboard.left(), movimientoIzquierda)
         self.configurarMovimiento(keyboard.right(), movimientoDerecha)
 
-        const tick = game.tick(75, {movimientoActual.mover(naveJugador)}, false)
-        tick.start()
+        tickMovimiento = game.tick(75, {movimientoActual.mover(naveJugador)}, false)
+        self.iniciarTickMovimiento()
 
         //#Otros
 
@@ -104,6 +105,14 @@ object controlesJugador {
     method detenerMovimiento() {
         movimientoActual = sinMovimiento
         naveJugador.enderezar()
+    }
+
+    method iniciarTickMovimiento(){
+        tickMovimiento.start()
+    }
+
+    method detenerTickMovimineto(){
+        tickMovimiento.stop()
     }
 }
 

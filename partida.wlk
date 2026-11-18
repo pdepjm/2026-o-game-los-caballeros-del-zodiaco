@@ -67,6 +67,9 @@ object partida {
         self.prepararEnemigos()
         self.ocultarPantallas()
         estadoActual = estadoJugando
+
+        controlesJugador.iniciarTickMovimiento()
+        proyectil.iniciarTickProyectil()
     }
 
     method verificarNivelCompletado() {
@@ -164,5 +167,7 @@ object partida {
         self.limpiarTablero()
         estadoActual = estadoGameOver
         pantallaGameover.mostrar()
+        controlesJugador.detenerTickMovimineto()
+        proyectil.detenerTickProyectil()
     }
 }
