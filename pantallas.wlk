@@ -1,0 +1,21 @@
+import game.*
+
+class Pantalla {
+    const imagen
+
+    method position() = game.at(0,0)
+    method image() = imagen
+
+    method mostrar(){
+        game.addVisual(self)
+    }
+
+    method ocultar(){
+        if (game.hasVisual(self)) {
+            game.removeVisual(self)
+        }
+    }
+}
+
+const menu = new Pantalla(imagen = "pantallas/menu.png")
+const pantallaGameover = new Pantalla(imagen = "pantallas/gameover.png")

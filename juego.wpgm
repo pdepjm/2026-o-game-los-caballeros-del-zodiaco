@@ -1,0 +1,30 @@
+import wollok.game.*
+import jugador.*
+import partida.*
+import mapa.*
+import enemigo.*
+import pantallas.*
+import armas.*
+
+
+program juego {
+
+    //Titulo del juego
+    game.title("Wollok Invaders")
+
+    //Configura incial de mapa -> Ancho, Alto, Background, etc
+    mapa.configuracionMapa()
+
+    //Menu -> toco enter para empezar
+    game.addVisual(menu)
+    keyboard.enter().onPressDo{
+        partida.iniciar()
+    }
+    game.addVisual(proyectil)
+
+    proyectil.iniciar()
+
+	controlesJugador.configuracion()
+
+    game.start()
+}

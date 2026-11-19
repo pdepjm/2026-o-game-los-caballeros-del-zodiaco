@@ -1,0 +1,191 @@
+import jugador.*
+import enemigo.*
+import armas.*
+import partida.*
+import nivel.*
+import wollok.game.*
+
+describe "Tests para Wollok Invaders" {
+
+    const enemigoLejos = new EnemigoVeloz(
+        vida = 100,
+        position = game.at(5, 12),
+        imagen = "enemigos/enemigoComun.png"
+    )
+
+    const enemigoCerca = new EnemigoFuerte(
+        vida = 100,
+        position = game.at(5, 8),
+        imagen = "enemigos/enemigoFuerte.png"
+    )
+
+    const enemigoOtraColumna = new EnemigoSuperFuerte(
+        vida = 100,
+        position = game.at(3, 8),
+        imagen = "enemigos/enemigoSuperFuerte.png"
+    )
+
+    method initialize() {
+        // Reinicia el estado de los enemigos
+        enemigoLejos.vida(100)
+        enemigoLejos.position(game.at(5, 12))
+
+        enemigoCerca.vida(100)
+        enemigoCerca.position(game.at(5, 8))
+
+        enemigoOtraColumna.vida(100)
+        enemigoOtraColumna.position(game.at(3, 8))
+
+        // Restaura la lista de enemigos
+        partida.enemigos().clear()
+        partida.enemigos().addAll([
+            enemigoLejos,
+            enemigoCerca,
+            enemigoOtraColumna
+        ])
+
+        // Restaura el estado de la nave, proyectil y armas
+        naveJugador.position(game.at(5, 0))
+        naveJugador.seleccionarArma(laser)
+        proyectil.ocultar()
+
+        bala.reiniciarCooldown()
+        laser.reiniciarCooldown()
+        cohete.reiniciarCooldown()
+    }
+
+    test "La nave respeta el limite derecho de la pantalla" {
+        naveJugador.position(game.at(7, 0))
+
+        naveJugador.mover(movimientoDerecha)
+
+        assert.equals(7, naveJugador.position().x())
+    }
+
+    test "La nave dispara una bala y al colisionar daña al enemigo" {
+        naveJugador.position(game.at(5, 0))
+        naveJugador.seleccionarArma(bala)
+
+        naveJugador.disparar()
+        proyectil.colisionarCon(enemigoCerca)
+
+        // El enemigo fuerte absorbe 25 puntos del daño de la bala (50 - 25 = 25)
+        assert.equals(75, enemigoCerca.vida())
+
+        // Los otros enemigos no reciben daño
+        assert.equals(110, enemigoLejos.vida()) // Se curó +10 al avanzar el turno tras el disparo
+        assert.equals(100, enemigoOtraColumna.vida())
+    }
+
+    test "El enemigo fuerte reduce el daño recibido por su armadura" {
+        enemigoCerca.recibirDanio(50)
+
+        // 50 de daño - 25 de resistencia = 25
+        assert.equals(75, enemigoCerca.vida())
+    }
+
+    test "La armadura bloquea ataques menores o iguales a su resistencia" {
+        enemigoCerca.recibirDanio(25)
+
+        // El daño no supera los 25 puntos de resistencia
+        assert.equals(100, enemigoCerca.vida())
+    }
+
+    test "El enemigo super fuerte bloquea el primer ataque con su escudo y recibe el segundo" {
+        const superFuerte = new EnemigoSuperFuerte(
+            vida = 200,
+            position = game.at(3, 8),
+            imagen = "enemigos/enemigoSuperFuerte.png"
+        )
+
+        // Primer impacto: rompe el escudo sin perder vida
+        superFuerte.recibirDanio(50)
+        assert.equals(200, superFuerte.vida())
+
+        // Segundo impacto: ya sin escudo, recibe el daño normalmente
+        superFuerte.recibirDanio(50)
+        assert.equals(150, superFuerte.vida())
+    }
+
+    test "El laser elimina a un enemigo veloz con 100 de vida al colisionar" {
+        const objetivo = new EnemigoVeloz(
+            vida = 100,
+            position = game.at(3, 8),
+            imagen = "enemigos/enemigoComun.png"
+        )
+
+        partida.enemigos().clear()
+        partida.enemigos().add(objetivo)
+
+        naveJugador.position(game.at(3, 0))
+        naveJugador.seleccionarArma(laser)
+
+        naveJugador.disparar()
+        proyectil.colisionarCon(objetivo)
+
+        assert.that(objetivo.estaMuerto())
+    }
+
+    test "El cohete daña al objetivo principal y hace la mitad de daño a los adyacentes" {
+        const centro = new EnemigoFuerte(
+            vida = 300,
+            position = game.at(4, 8),
+            imagen = "enemigos/enemigoFuerte.png"
+        )
+        const alLado = new EnemigoFuerte(
+            vida = 300,
+            position = game.at(5, 8),
+            imagen = "enemigos/enemigoFuerte.png"
+        )
+
+        partida.enemigos().clear()
+        partida.enemigos().addAll([centro, alLado])
+
+        cohete.impactar(centro)
+
+        // Centro: 200 de daño - 25 de armadura = 175 de daño (300 - 175 = 125)
+        assert.equals(125, centro.vida())
+        // Adyacente: 100 de daño (mitad) - 25 de armadura = 75 de daño (300 - 75 = 225)
+        assert.equals(225, alLado.vida())
+    }
+
+    test "El cambio de turno mueve a los enemigos hacia abajo y cura al enemigo veloz" {
+        const posicionInicialY = enemigoLejos.position().y()
+
+        partida.turnoJugadorTerminado()
+
+        assert.equals(posicionInicialY - 1, enemigoLejos.position().y())
+        // Tenía 100 de vida y al moverse se cura un 10% (110)
+        assert.equals(110, enemigoLejos.vida())
+    }
+
+    test "El enemigo fuerte empieza con 150 de vida en el nivel 3" {
+        const enemigo = fabricaEnemigoFuerte.crear(game.at(0, 10), 3)
+
+        assert.equals(150, enemigo.vida())
+    }
+
+    test "El enemigo SuperFuerte tiene 242 de vida en el nivel 7" {
+        const enemigo = fabricaEnemigoSuperFuerte.crear(game.at(0, 10), 7)
+
+        assert.equals(242, enemigo.vida().truncate(0))
+    }
+
+    test "En el nivel 1 solo está disponible el veloz" {
+        const nivel = new Nivel(nivel = 1)
+        const tipos = nivel.tiposDeEnemigoDisponibles()
+
+        assert.equals(1, tipos.size())
+        assert.that(tipos.contains(fabricaEnemigoVeloz))
+    }
+
+    test "En el nivel 5 aparece el super fuerte" {
+        const nivel = new Nivel(nivel = 5)
+        const tipos = nivel.tiposDeEnemigoDisponibles()
+
+        assert.that(tipos.contains(fabricaEnemigoVeloz))
+        assert.that(tipos.contains(fabricaEnemigoFuerte))
+        assert.that(tipos.contains(fabricaEnemigoSuperFuerte))
+        assert.equals(3, tipos.size())
+    }
+}
